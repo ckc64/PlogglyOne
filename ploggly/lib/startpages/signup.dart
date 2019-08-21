@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:ploggly/firstimepages/detailsonesignup.dart';
+import 'package:ploggly/firstimepages/steponepage.dart';
 import 'package:ploggly/startpages/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -106,12 +106,13 @@ class _SignupPageState extends State<SignupPage> {
                     child: RaisedButton(
                   onPressed: () async{
                       try{
-                        final newUser = await fAuth.createUserWithEmailAndPassword(email: _email.trim(), password: _password.trim());
+                        //final newUser =
+                        final newUser = await fAuth.createUserWithEmailAndPassword(email: _email, password: _password);
                         print('$_email and $_password is registered');
-                        if(newUser!=null) {
-                          Navigator.push(context, MaterialPageRoute(
-                              builder: (context) => SignUpOne()));
-                        }
+                       if(newUser!=null) {
+                         Navigator.push(context, MaterialPageRoute(
+                             builder: (context) =>  SignUpOnePage ()));
+                       }
                       }catch(e){
                         print(e);
                       }
@@ -150,95 +151,84 @@ class _SignupPageState extends State<SignupPage> {
                       ),
                   ),
                 ),
-                SizedBox(height: 10.0),
-                Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-
-                  Container(
-                 
-                  padding: EdgeInsets.only(left: 35.0),
-                  child: ButtonTheme(
-                    height: 55.0,
-                    minWidth: 165.0,
-                    child:RaisedButton(
-                      onPressed: (){},
-                      color: Colors.blue,
-                      animationDuration: Duration(seconds: 10),
-                      elevation: 7,
-                  
-                        shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                          
-                        ),
-                        child: Row(
-                          
-                          children: <Widget>[
-                          
-                            Center(
-                              child: ImageIcon(AssetImage('assets/images/facebook-icon.png'),color: Colors.white,),
-                            ),
-                            SizedBox(width: 10.0,),
-                            Center(
-                              child: Text('FACEBOOK',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15.0,
-                                  color:Colors.white,
-                                  fontFamily: 'Montserrat'
-                                ),  
-                              ),
-                            ),
-                        ],),
-                      ),
-                    ),
-
-                ),
-                SizedBox(width: 10.0,),
-                Container(
-                
-                 
-                  child: ButtonTheme(
-                    height: 55.0,
-                    minWidth: 165.0,
-                    child:RaisedButton(
+                 SizedBox(height: 15.0,),
+                    Container(
+                     
+                      padding: EdgeInsets.only(left: 40.0,right:40.0),
+                      child: ButtonTheme(
+                        height: 55.0,
+                        child:RaisedButton(
+                          onPressed: (){},
+                          color: Colors.blue,
+                          animationDuration: Duration(seconds: 10),
+                          elevation: 7,
                       
-                      onPressed: (){
-                        
-                      },
-                      color: Colors.red,
-                      animationDuration: Duration(seconds: 10),
-                      elevation: 7,
-                  
-                        shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                          
+                            shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                              
+                            ),
+                            child: Row(
+                              mainAxisAlignment:MainAxisAlignment.center,
+                              children: <Widget>[
+                              
+                                Center(
+                                  child: ImageIcon(AssetImage('assets/images/facebook-icon.png'),color: Colors.white,),
+                                ),
+                                SizedBox(width: 10.0,),
+                                Center(
+                                  child: Text('FACEBOOK',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15.0,
+                                      color:Colors.white,
+                                      fontFamily: 'Montserrat'
+                                    ),  
+                                  ),
+                                ),
+                            ],),
+                          ),
                         ),
-                        child: Row(
-                          mainAxisAlignment:MainAxisAlignment.center,
-                          children: <Widget>[
-                          
-                            Center(
-                              child: ImageIcon(AssetImage('assets/images/google-icon.png'),color:Colors.white),
-                            ),
-                            SizedBox(width: 10.0,),
-                            
-                            Center(
-                              child: Text('Google',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20.0,
-                                  color:Colors.white,
-                                  fontFamily: 'Montserrat'
-                                ),  
-                              ),
-                            ),
-                        ],),
-                      ),
-                    ),
 
-                ),
-                ],),
+                    ),
+                      SizedBox(height: 15.0,),
+                    Container(
+                     
+                      padding: EdgeInsets.only(left: 40.0,right:40.0),
+                      child: ButtonTheme(
+                        height: 55.0,
+                        child:RaisedButton(
+                          onPressed: (){},
+                          color: Colors.red,
+                          animationDuration: Duration(seconds: 10),
+                          elevation: 7,
+                      
+                            shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                              
+                            ),
+                            child: Row(
+                              mainAxisAlignment:MainAxisAlignment.center,
+                              children: <Widget>[
+                              
+                                Center(
+                                  child: ImageIcon(AssetImage('assets/images/google-icon.png'),color: Colors.white,),
+                                ),
+                                SizedBox(width: 10.0,),
+                                Center(
+                                  child: Text('GOOGLE',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15.0,
+                                      color:Colors.white,
+                                      fontFamily: 'Montserrat'
+                                    ),  
+                                  ),
+                                ),
+                            ],),
+                          ),
+                        ),
+
+                    ),
                               
                   SizedBox(height: 10.0,),
                 Center(

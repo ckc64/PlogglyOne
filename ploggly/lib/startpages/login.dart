@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ploggly/firstimepages/steponepage.dart';
 import 'signup.dart';
 
 class LoginPage extends StatefulWidget {
@@ -10,7 +12,7 @@ class LoginPage extends StatefulWidget {
   
 class _LoginPageState extends State<LoginPage> {
 
-
+  final fAuth = FirebaseAuth.instance;
   String email, password;
 
 
@@ -82,9 +84,9 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ), 
                     SizedBox(height: 10.0),
-                    Center(
-                      
-                        child: Text(
+
+
+                         Text(
                           'Forgot Password?',
                           style: TextStyle(
                             color: Colors.pink,
@@ -94,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                       
-                    ),
+
                     
                     Container(
                      
@@ -104,8 +106,19 @@ class _LoginPageState extends State<LoginPage> {
                         height: 55.0,
                         
                         child: RaisedButton(
-                      onPressed: (){
-                       
+                      onPressed: ()async{
+
+                          try{
+
+                            final user = await fAuth.signInWithEmailAndPassword(email: email, password: password);
+                            if(user !=null){
+                              Navigator.pushReplacement(context,
+                              MaterialPageRoute(builder: (context)=> SignUpOnePage ()));
+                            }
+
+                          }catch(e){
+                            print(e);
+                          }
                           
                       },
                       color: Colors.pink,
