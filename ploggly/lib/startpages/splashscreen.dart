@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ploggly/firstimepages/steponepage.dart';
 
 import 'login.dart';
 
@@ -32,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
       seconds: 3
       ),(){
 
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LoginPage()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>SignUpOnePage()));
        
      },
     );
