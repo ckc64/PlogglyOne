@@ -82,14 +82,102 @@ class _SignUpThreeState extends State<SignUpThree> {
                   color: Colors.grey
                 ), 
               ),
-                
-                  
-
-                 
-
+               
                 
               ],),
-          
+               
+            
+               
+                 Column(
+                   children: <Widget>[
+                     Padding(
+                       padding: const EdgeInsets.only(top:270),
+                       child: Center(
+
+                        child: CircleAvatar(
+                          backgroundImage: AssetImage('assets/images/facebook-icon.png'),
+                          minRadius: 50,
+                          maxRadius: 100,
+                          
+                        ),),
+                     ),
+
+                     
+                   ],
+                 ),
+            
+              
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(230.0,410.0,0,0),
+                  child: RawMaterialButton(
+                      onPressed: () {},
+                      child: new Icon(
+                        Icons.add,
+                        color: Colors.white,
+                        size: 35.0,
+                      ),
+                      shape: new CircleBorder(),
+                      elevation: 2.0,
+                      fillColor: Colors.pink,
+                      padding: const EdgeInsets.all(10.0),
+                    ),
+                ), 
+
+                Padding(
+                  padding: EdgeInsets.only(left: 20.0,right: 40.0,top:500),
+                                child: TextField(
+                            keyboardType:TextInputType.multiline,
+                            maxLines: 3,
+                           onChanged: (value){
+                              
+                           },                      
+                            decoration: InputDecoration(
+                                hintText: 'Bio', 
+                              
+                                
+                            ),
+                            
+                           
+                          ),
+                ),
+
+                 Container(
+                       
+                        margin: EdgeInsets.only(top:30.0),
+                        padding: EdgeInsets.only(left: 40.0,right:40.0,top: 570),
+                        child:ButtonTheme(
+                          height: 55.0,
+                          
+                          child: FlatButton(
+                        onPressed: (){
+
+                           Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpThree()));
+                            
+                        },
+                        color: Colors.pink,
+                       
+                        
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          
+                        ),
+                        child: Center(child: 
+                            Text('Finish',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'Montserrat',
+                                fontSize: 15.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+
+                            ),
+                            ),
+                      ),
+                        ),
+                        
+                      ),
+
+                
           ],),
         ),
     );
