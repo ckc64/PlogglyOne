@@ -1,6 +1,9 @@
 
 import 'package:flutter/material.dart';
 import 'progressStepCircle.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'customradio.dart';
+
 
 class SignUpOnePage extends StatefulWidget {
   @override
@@ -8,12 +11,14 @@ class SignUpOnePage extends StatefulWidget {
 }
 
 
+class _SignUpOnePageState extends State<SignUpOnePage> with SingleTickerProviderStateMixin {
+
+  
 
 
 
-class _SignUpOnePageState extends State<SignUpOnePage> {
+ String _date = "Birthday";
 
- 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,9 +121,74 @@ class _SignUpOnePageState extends State<SignUpOnePage> {
                          
                         ),
               ),
-        
-               
-              
+              //Datepicker birthday
+            Padding(
+              padding: EdgeInsets.only(top:20.0,left: 20.0,right: 40.0),
+              child: RaisedButton(
+              shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5.0)),
+                  elevation: 4.0,
+                  onPressed: () {
+                    DatePicker.showDatePicker(context,
+                        theme: DatePickerTheme(
+                          doneStyle: TextStyle(color: Colors.pink,fontFamily: 'Montseratt',fontSize: 18.0),
+                          cancelStyle: TextStyle(color: Colors.pink,fontFamily: 'Montseratt',fontSize: 18.0),
+                          itemHeight: 60.0,
+                          containerHeight: 300.0,
+                        ),
+                        showTitleActions: true,
+                        minTime: DateTime(1950, 1, 1),
+                        maxTime: DateTime(2019, 12, 31), 
+                        onConfirm: (date) {
+                      print('confirm $date');
+                      _date = '${date.year} - ${date.month} - ${date.day}';
+                      setState(() {});
+                    }, 
+                    currentTime: DateTime.now(), locale: LocaleType.en);
+                  },
+                  child: Container(
+                    alignment: Alignment.center,
+                    height: 50.0,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Container(
+                              child: Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.date_range,
+                                    size: 18.0,
+                                    color: Colors.pink,
+                                  ),
+                                  Text(
+                                    " $_date",
+                                    style: TextStyle(
+                                         color: Colors.pink,
+                                        fontFamily: 'Montseratt',
+                                       
+                                        fontSize: 18.0),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                        Text(
+                          "  Change",
+                          style: TextStyle(
+                              color: Colors.pink,
+                              fontFamily: 'Montseratt',
+                              fontSize: 18.0),
+                        ),
+                      ],
+                    ),
+                  ),
+                  color: Colors.white,
+                ),
+            ),
+             
              
           ],),
 
