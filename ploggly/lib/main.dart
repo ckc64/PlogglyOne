@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'startpages/splashscreen.dart';
+import 'package:ploggly/splashscreen.dart';
+
 
 
 void main() => runApp(MyApp());
@@ -23,6 +24,6 @@ class MainApp extends StatefulWidget {
 class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
-    return SplashScreen();
+    return SplashScreenFull();
   }
 }

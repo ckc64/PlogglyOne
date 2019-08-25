@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ploggly/firstimepages/steponepage.dart';
 
-import 'login.dart';
+import 'package:ploggly/loginpages/ui/login_page.dart';
 
 
 
@@ -12,18 +12,18 @@ class SplashScreenApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+      home: SplashScreenFull(),
       
     );
   }
 }
 
-class SplashScreen extends StatefulWidget {
+class SplashScreenFull extends StatefulWidget {
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreenFull> {
 
   @override
   void initState() {

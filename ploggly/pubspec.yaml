@@ -35,7 +35,7 @@ dev_dependencies:
   firebase_core: ^0.4.0+1
   firebase_auth: ^0.11.1+3
   cloud_firestore: ^0.12.9
-  
+  font_awesome_flutter: ^8.0.1
 
  
 
@@ -55,9 +55,19 @@ flutter:
 
     - family: Shadows
       fonts:
-        - asset: assets/fonts/ShadowsIntoLight-Regular.ttf
+      - asset: assets/fonts/ShadowsIntoLight-Regular.ttf
     - family: Montserrat
       fonts:
-        - asset: assets/fonts/Montserrat-Regular.ttf
+      - asset: assets/fonts/Montserrat-Regular.ttf
 
-  
+    - family: WorkSansSemiBold
+      fonts:
+        - asset: assets/fonts/WorkSans-SemiBold.ttf
+
+    - family: WorkSansBold
+      fonts:
+        - asset: assets/fonts/WorkSans-Bold.ttf
+
+    - family: WorkSansMedium
+      fonts:
+        - asset: assets/fonts/WorkSans-Medium.ttf
