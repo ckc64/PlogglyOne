@@ -1,34 +1,34 @@
 {
   "project_info": {
-    "project_number": "37188834235",
-    "firebase_url": "https://plogglybeta.firebaseio.com",
-    "project_id": "plogglybeta",
-    "storage_bucket": "plogglybeta.appspot.com"
+    "project_number": "1091315542285",
+    "firebase_url": "https://plogglydb.firebaseio.com",
+    "project_id": "plogglydb",
+    "storage_bucket": "plogglydb.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:37188834235:android:59468c73ca142f76",
+        "mobilesdk_app_id": "1:1091315542285:android:59468c73ca142f76",
         "android_client_info": {
           "package_name": "com.charleskurt.ploggly"
         }
       },
       "oauth_client": [
         {
-          "client_id": "37188834235-irohppvpkpe6puoee09aev4kb6gg8c17.apps.googleusercontent.com",
+          "client_id": "1091315542285-bbnrqmca8qdl82sersqpb8e6r5mb6k41.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDzvNb5IH-KOK8spNq9_PwHXTLsk6Ps5uk"
+          "current_key": "AIzaSyBubgkitvhy27Kmwwl7FB4w-oGIa8Ajtvo"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "37188834235-irohppvpkpe6puoee09aev4kb6gg8c17.apps.googleusercontent.com",
+              "client_id": "1091315542285-bbnrqmca8qdl82sersqpb8e6r5mb6k41.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
