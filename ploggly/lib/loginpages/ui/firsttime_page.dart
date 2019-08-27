@@ -118,7 +118,9 @@ class _FirsTimePageState extends State<FirsTimePage> {
           
           Padding(padding:EdgeInsets.only(left: 190.0,top:140.0),
             child:FlatButton(
-              onPressed: (){},
+              onPressed: (){
+                getImage();
+              },
               child:Text('+',style:TextStyle(fontSize: 40.0,color:Colors.white)),
               shape: CircleBorder(),
               color:Colors.pink,
