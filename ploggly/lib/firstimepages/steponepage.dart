@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:ploggly/firstimepages/steptwopage.dart';
 import 'progressStepCircle.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'customradio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 
@@ -314,7 +313,7 @@ class _SignUpOnePageState extends State<SignUpOnePage> with SingleTickerProvider
                       onPressed: (){
                           String id = loggedInUser.uid;
                           print('USER ID : $id');
-                          //Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpTwo()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpTwo()));
                           
                       },
                       color: Colors.pink,
