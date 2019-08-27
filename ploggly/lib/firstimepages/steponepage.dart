@@ -4,15 +4,37 @@ import 'package:ploggly/firstimepages/steptwopage.dart';
 import 'progressStepCircle.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'customradio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 
-class SignUpOnePage extends StatefulWidget {
+class SignUpOnePage extends StatefulWidget {  
+
   @override
   _SignUpOnePageState createState() => _SignUpOnePageState();
 }
 
 
 class _SignUpOnePageState extends State<SignUpOnePage> with SingleTickerProviderStateMixin {
+
+  FirebaseAuth fAuth = FirebaseAuth.instance;
+  FirebaseUser loggedInUser;
+    void getCurrentUser() async{
+        final user = await fAuth.currentUser();
+        if(user != null){
+          loggedInUser = user;
+        }
+
+    }
+
+   
+
+
+  @override
+  void initState() { 
+    super.initState();
+      getCurrentUser();
+     
+  }
 
  // state variable
  int _radioValue = 0;
@@ -290,8 +312,9 @@ class _SignUpOnePageState extends State<SignUpOnePage> with SingleTickerProvider
                         
                         child: RaisedButton(
                       onPressed: (){
-
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpTwo()));
+                          String id = loggedInUser.uid;
+                          print('USER ID : $id');
+                          //Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpTwo()));
                           
                       },
                       color: Colors.pink,

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart' as prefix0;
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:ploggly/firstimepages/steponepage.dart';
 import 'package:ploggly/loginpages/style/theme.dart' as Theme;
 import 'package:ploggly/loginpages/utils/bubble_indication_painter.dart';
 
@@ -44,6 +46,7 @@ class _LoginPageState extends State<LoginPage>
 
 //firebase
   final fAuth = FirebaseAuth.instance;
+  final fStore = Firestore.instance;
   
   @override
   Widget build(BuildContext context) {
@@ -655,10 +658,20 @@ class _LoginPageState extends State<LoginPage>
                         try{
                           final newUser = await fAuth.createUserWithEmailAndPassword(
                           email: email, password: confirmpass);
-
+                          FirebaseUser firebaseUser = await fAuth.currentUser();
+                        String id = firebaseUser.uid;
+                          
                           if(newUser != null){
-                              print('User already registered');
-                          }
+                              await fStore.collection('users').add({
+                                  'uid':id,
+                                  'name':name,
+                                  'email':email
+                                  
+                              });
+                              Navigator.pushReplacement(context,
+                                MaterialPageRoute (builder: (context)=>SignUpOnePage())
+                              );
+                          }                          
 
                         }on PlatformException{
                             showDialogAlert('Email is Already in use');
