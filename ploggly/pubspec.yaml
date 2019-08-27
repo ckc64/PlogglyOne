@@ -20,7 +20,8 @@ dependencies:
   flutter:
     sdk: flutter
   
-
+  firebase_storage: ^3.0.6
+  image_picker: ^0.6.1+4
   flutter_datetime_picker: ^1.2.6
   custom_radio: ^0.1.2
 

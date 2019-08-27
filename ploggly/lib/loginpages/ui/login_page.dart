@@ -478,35 +478,35 @@ class _LoginPageState extends State<LoginPage>
                 height: 360.0,
                 child: Column(
                   children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(
-                          top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
-                      child: TextField(
-                        focusNode: myFocusNodeName,
-                        controller: signupNameController,
-                        keyboardType: TextInputType.text,
-                        textCapitalization: TextCapitalization.words,
-                        style: TextStyle(
-                            fontFamily: "Montserrat",
-                            fontSize: 16.0,
-                            color: Colors.black),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          icon: Icon(
-                            FontAwesomeIcons.user,
-                            color: Colors.pink,
-                          ),
-                          hintText: "Name",
-                          hintStyle: TextStyle(
-                              fontFamily: "Montserrat", fontSize: 16.0),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: 250.0,
-                      height: 1.0,
-                      color: Colors.grey[400],
-                    ),
+                    // Padding(
+                    //   padding: EdgeInsets.only(
+                    //       top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
+                    //   child: TextField(
+                    //     focusNode: myFocusNodeName,
+                    //     controller: signupNameController,
+                    //     keyboardType: TextInputType.text,
+                    //     textCapitalization: TextCapitalization.words,
+                    //     style: TextStyle(
+                    //         fontFamily: "Montserrat",
+                    //         fontSize: 16.0,
+                    //         color: Colors.black),
+                    //     decoration: InputDecoration(
+                    //       border: InputBorder.none,
+                    //       icon: Icon(
+                    //         FontAwesomeIcons.user,
+                    //         color: Colors.pink,
+                    //       ),
+                    //       hintText: "Name",
+                    //       hintStyle: TextStyle(
+                    //           fontFamily: "Montserrat", fontSize: 16.0),
+                    //     ),
+                    //   ),
+                    // ),
+                    // Container(
+                    //   width: 250.0,
+                    //   height: 1.0,
+                    //   color: Colors.grey[400],
+                    // ),
                     Padding(
                       padding: EdgeInsets.only(
                           top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),

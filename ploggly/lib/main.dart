@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ploggly/loginpages/ui/firsttime_page.dart';
+import 'package:ploggly/loginpages/ui/login_page.dart';
 import 'package:ploggly/splashscreen.dart';
 
 
@@ -11,6 +13,12 @@ class MyApp extends StatelessWidget {
     
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        brightness:     Brightness.light,
+        primaryColor:   Colors.pink,
+        accentColor:    Colors.red,
+        fontFamily: 'Montserrat'
+      ),
         home: MainApp()
     );
   }
@@ -24,6 +32,6 @@ class MainApp extends StatefulWidget {
 class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
-    return SplashScreenFull();
+    return FirsTimePage();
   }
 }
