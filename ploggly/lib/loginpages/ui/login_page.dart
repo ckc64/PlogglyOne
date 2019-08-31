@@ -4,9 +4,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart' as prefix0;
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:ploggly/firstimepages/steponepage.dart';
+
 import 'package:ploggly/loginpages/style/theme.dart' as Theme;
+
 import 'package:ploggly/loginpages/utils/bubble_indication_painter.dart';
+
+
+import 'firsttime_page.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -641,13 +645,13 @@ class _LoginPageState extends State<LoginPage>
                     onPressed: () async {
                       String email = signupEmailController.text,
                           password = signupPasswordController.text,
-                          confirmpass = signupConfirmPasswordController.text,
-                          name = signupNameController.text;
+                          confirmpass = signupConfirmPasswordController.text;
+                          
 
                       if (email.isEmpty ||
                           password.isEmpty ||
-                          confirmpass.isEmpty ||
-                          name.isEmpty) {
+                          confirmpass.isEmpty 
+                         ) {
                         showDialogAlert('Please fill all the fields');
                       } else if (password != confirmpass) {
                         showDialogAlert('Confirm password does not match');
@@ -662,14 +666,9 @@ class _LoginPageState extends State<LoginPage>
                         String id = firebaseUser.uid;
                           
                           if(newUser != null){
-                              await fStore.collection('users').add({
-                                  'uid':id,
-                                  'name':name,
-                                  'email':email
-                                  
-                              });
+                             
                               Navigator.pushReplacement(context,
-                                MaterialPageRoute (builder: (context)=>SignUpOnePage())
+                                MaterialPageRoute (builder: (context)=>FirsTimePage())
                               );
                           }                          
 
