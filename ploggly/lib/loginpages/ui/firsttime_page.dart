@@ -6,6 +6,12 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:image/image.dart' as Im;
+import 'package:ploggly/loginpages/ui/home_page.dart';
+import 'package:uuid/uuid.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'home_page.dart';
 
 class FirsTimePage extends StatefulWidget {
   @override
@@ -14,6 +20,8 @@ class FirsTimePage extends StatefulWidget {
 
 class _FirsTimePageState extends State<FirsTimePage> {
 
+  //spinner
+  bool showSpinner = false;
   //controllers
     TextEditingController nameController = new TextEditingController();
     TextEditingController usernameController = new TextEditingController();
@@ -21,7 +29,11 @@ class _FirsTimePageState extends State<FirsTimePage> {
 
   FirebaseAuth fAuth = FirebaseAuth.instance;
   FirebaseUser loggedInUser;
+  final StorageReference storageRef = FirebaseStorage.instance.ref();
 
+
+  //unique for post 
+String profileID = Uuid().v4();
     //Fire Store
     final userRef = Firestore.instance.collection('users');
   
@@ -42,9 +54,6 @@ String id;
     id = loggedInUser.uid;
   
   }
-  
-
-  
 
   int _currentStep =0;
   File _image;
@@ -79,53 +88,57 @@ String id;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body:  SingleChildScrollView(
-                  child: Column(
-                    
-            children: <Widget>[
-               Padding(
-                        padding: EdgeInsets.only(top: 100.0),
-                        child: Text(
-                          'set up account ',
-                          style: TextStyle(
-                              color: Colors.pink,
-                              fontFamily: 'Pacifico',
-                              fontSize: 35.0),
-                        )),
-              Stepper(
-                    steps:  _signUpStep(),
-                    currentStep: this._currentStep,
-                    onStepTapped: (step){
-                      setState(() {
-                        this._currentStep = step; 
-                      });
-                    },
-                    onStepContinue: (){
+        body:  ModalProgressHUD(
+                inAsyncCall:showSpinner,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      
+              children: <Widget>[
+                 Padding(
+                          padding: EdgeInsets.only(top: 100.0),
+                          child: Text(
+                            'set up account ',
+                            style: TextStyle(
+                                color: Colors.pink,
+                                fontFamily: 'Pacifico',
+                                fontSize: 35.0),
+                          )),
+                Stepper(
+                      steps:  _signUpStep(),
+                      currentStep: this._currentStep,
+                      onStepTapped: (step){
                         setState(() {
-                          if(this._currentStep < this._signUpStep().length-1){
-                            this._currentStep = this._currentStep+1;
-                          }else{
-                            //if all fields completed
-                            createUser();
-                            print('complete');
-                          } 
+                          this._currentStep = step; 
                         });
-                    },
-                    onStepCancel: (){
-                      setState(() {
-                       if(this._currentStep>0){
-                          this._currentStep = this._currentStep-1;
-                       }else{
-                         this._currentStep = 0;
-                       } 
-                      });
-                    },
-                    
+                      },
+                      onStepContinue: () async{
+                          setState(() {
+                            if(this._currentStep < this._signUpStep().length-1){
+                              this._currentStep = this._currentStep+1;
+                            }else{
+                                setState(() {
+                                 showSpinner=true;
+                                });             
+                                
+                            } 
+                          });
+                      },
+                      onStepCancel: (){
+                        setState(() {
+                         if(this._currentStep>0){
+                            this._currentStep = this._currentStep-1;
+                         }else{
+                           this._currentStep = 0;
+                         } 
+                        });
+                      },
+                      
       
-                ),
+                  ),
 
 
-            ],
+              ],
+            ),
           ),
         ),
         
@@ -177,6 +190,30 @@ String id;
     });
 
   }
+
+  compressImage() async {
+    final tempDir = await getTemporaryDirectory();
+    final path = tempDir.path;
+    Im.Image imageFile = Im.decodeImage(_image.readAsBytesSync());
+    final compressImageFile = File('$path/img_$profileID.jpg')..writeAsBytesSync(Im.encodeJpg(imageFile,quality:85));
+
+    setState(() {
+     _image = compressImageFile; 
+    
+    });
+     
+  }
+
+ Future<String>uploadImage(imageFile) async{
+      StorageUploadTask uploadTask = storageRef.child("profile_$profileID.jpg").putFile(imageFile);
+      StorageTaskSnapshot storageSnap = await uploadTask.onComplete;
+      String downloadUrl = await storageSnap.ref.getDownloadURL();
+      return downloadUrl;
+  }
+
+  
+ 
+
   Widget _CircleUploadAvatar(BuildContext context) {
    
     return Container(
@@ -328,7 +365,7 @@ String id;
                     ),
                 ),
                 Padding(
-                        padding: EdgeInsets.only(top:20.0,right: 235.0),
+                        padding: EdgeInsets.only(top:20.0,right: 225.0),
                            child: Text(
                           'Gender',
                           style: new TextStyle(
@@ -338,7 +375,9 @@ String id;
                           ),
                         ),
                       ),
-                new Row(
+                Padding(
+                  padding: EdgeInsets.only(left: 0.0),
+                  child:new Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
                           Radio(
@@ -349,7 +388,7 @@ String id;
                           ),
                           Text(
                             'Male',
-                            style: new TextStyle(fontSize: 16.0),
+                            style: new TextStyle(fontSize: 14.0),
                           ),
                           Radio(
                             activeColor: Colors.pink,
@@ -360,7 +399,7 @@ String id;
                           Text(
                             'Female',
                             style: TextStyle(
-                              fontSize: 16.0,
+                              fontSize: 14.0,
                             ),
                           ),
                           Radio(
@@ -372,11 +411,13 @@ String id;
                           ),
                           Text(
                             'LGBTQ',
-                            style: new TextStyle(fontSize: 16.0),
+                            style: new TextStyle(fontSize: 14.0),
                           ),
                         ],
                       ),
 
+                ) 
+                
             ],),
          
 
@@ -384,18 +425,37 @@ String id;
 
   }
 
-  createUser() {
-      userRef
-      .document(id)
-      .setData({
-        'bio': bioController.text,
-        'birtdate': _date,
-        'gender': _value,
-        'name':nameController.text,
-        'profpic':'try',
-        'userid':id,
-        'username':usernameController.text
-      });
+  createUser() async{
+
+ String mediaURL = await uploadImage(_image);
+    setState(() {
+      showSpinner = true;
+    });
+
+        try{
+           await userRef
+              .document(id)
+              .setData({
+                'bio': bioController.text,
+                'birtdate': _date,
+                'gender': _value,
+                'name':nameController.text,
+                'profpic':mediaURL,
+                'userid':id,
+                'username':usernameController.text
+              });
+
+            Navigator.pushReplacement(context, 
+            MaterialPageRoute(builder: (context) =>Homepage()));
+          setState(() {
+           showSpinner=false;
+          });
+        }catch(e){
+          print(e);
+        }
+     
+
+   
   }
 
 }

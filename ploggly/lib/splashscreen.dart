@@ -1,22 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ploggly/firstimepages/steponepage.dart';
-
 import 'package:ploggly/loginpages/ui/login_page.dart';
-
-
-
-void main() => runApp(SplashScreenApp());
-
-class SplashScreenApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: SplashScreenFull(),
-      
-    );
-  }
-}
 
 class SplashScreenFull extends StatefulWidget {
   @override
