@@ -8,10 +8,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:image/image.dart' as Im;
-import 'package:ploggly/loginpages/ui/home_page.dart';
+
 import 'package:uuid/uuid.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-import 'home_page.dart';
+
 import 'login_page.dart';
 
 class FirsTimePage extends StatefulWidget {
@@ -47,6 +47,8 @@ String profileID = Uuid().v4();
 
     }
 String id;
+int bDateYear=0;
+
 @override
   void setState(fn) async{
     // TODO: implement setState
@@ -121,7 +123,10 @@ String id;
                                  showSpinner=true;
                                 }); 
 
-                                createUser();            
+                                createUser();
+
+                               
+                                    
                                 
                             } 
                           });
@@ -321,6 +326,7 @@ String id;
                             onConfirm: (date) {
                           print('confirm $date');
                           _date = '${date.year} - ${date.month} - ${date.day}';
+                          bDateYear = date.year;
                           setState(() {});
                         }, 
                         currentTime: DateTime.now(), locale: LocaleType.en);
@@ -431,11 +437,14 @@ String id;
   createUser() async{
 
  String mediaURL = await uploadImage(_image);
+ final dateNow = DateTime.now().year;
+ final ageN = dateNow - bDateYear;
 
         try{
            await userRef
               .document(id)
               .setData({
+                'age':ageN,
                 'bio': bioController.text,
                 'birtdate': _date,
                 'gender': _value,
