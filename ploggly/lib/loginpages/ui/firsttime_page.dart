@@ -12,6 +12,7 @@ import 'package:ploggly/loginpages/ui/home_page.dart';
 import 'package:uuid/uuid.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'home_page.dart';
+import 'login_page.dart';
 
 class FirsTimePage extends StatefulWidget {
   @override
@@ -111,14 +112,16 @@ String id;
                           this._currentStep = step; 
                         });
                       },
-                      onStepContinue: () async{
+                      onStepContinue: () {
                           setState(() {
                             if(this._currentStep < this._signUpStep().length-1){
                               this._currentStep = this._currentStep+1;
                             }else{
                                 setState(() {
                                  showSpinner=true;
-                                });             
+                                }); 
+
+                                createUser();            
                                 
                             } 
                           });
@@ -428,9 +431,6 @@ String id;
   createUser() async{
 
  String mediaURL = await uploadImage(_image);
-    setState(() {
-      showSpinner = true;
-    });
 
         try{
            await userRef
@@ -445,11 +445,15 @@ String id;
                 'username':usernameController.text
               });
 
-            Navigator.pushReplacement(context, 
-            MaterialPageRoute(builder: (context) =>Homepage()));
-          setState(() {
+      
+             setState(() {
            showSpinner=false;
           });
+
+            
+            Navigator.pushReplacement(context, 
+            MaterialPageRoute(builder: (context) =>LoginPage()));
+         
         }catch(e){
           print(e);
         }
