@@ -8,6 +8,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:ploggly/loginpages/style/theme.dart' as Theme;
 
 import 'package:ploggly/loginpages/utils/bubble_indication_painter.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
+
 
 
 import 'firsttime_page.dart';
@@ -52,6 +54,8 @@ class _LoginPageState extends State<LoginPage>
   final fAuth = FirebaseAuth.instance;
   final fStore = Firestore.instance;
   
+  bool showSpinner = false;
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -219,402 +223,92 @@ class _LoginPageState extends State<LoginPage>
 
   Widget _buildSignIn(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(top: 23.0),
-      child: Column(
-        children: <Widget>[
-          Stack(
-            alignment: Alignment.topCenter,
-            overflow: Overflow.visible,
-            children: <Widget>[
-              // Card(
-
-              // color: Colors.white,
-
-              // child:
-              Container(
-                width: 300.0,
-                height: 190.0,
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(
-                          top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
-                      child: TextField(
-                        focusNode: myFocusNodeEmailLogin,
-                        controller: loginEmailController,
-                        keyboardType: TextInputType.emailAddress,
-                        style: TextStyle(
-                            fontFamily: "Montseratt",
-                            fontSize: 16.0,
-                            color: Colors.black),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          icon: Icon(
-                            FontAwesomeIcons.envelope,
-                            color: Colors.pink,
-                            size: 22.0,
-                          ),
-                          hintText: "Email Address",
-                          hintStyle: TextStyle(
-                              fontFamily: "Montseratt", fontSize: 17.0),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: 250.0,
-                      height: 1.0,
-                      color: Colors.grey[400],
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
-                      child: TextField(
-                        focusNode: myFocusNodePasswordLogin,
-                        controller: loginPasswordController,
-                        obscureText: _obscureTextLogin,
-                        style: TextStyle(
-                            fontFamily: "Montseratt",
-                            fontSize: 16.0,
-                            color: Colors.black),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          icon: Icon(
-                            FontAwesomeIcons.lock,
-                            size: 22.0,
-                            color: Colors.pink,
-                          ),
-                          hintText: "Password",
-                          hintStyle: TextStyle(
-                              fontFamily: "Montseratt", fontSize: 17.0),
-                          suffixIcon: GestureDetector(
-                            onTap: _toggleLogin,
-                            child: Icon(
-                              _obscureTextLogin
-                                  ? FontAwesomeIcons.eye
-                                  : FontAwesomeIcons.eyeSlash,
-                              size: 15.0,
-                              color: Colors.pink,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // ),
-              Container(
-                margin: EdgeInsets.only(top: 170.0),
-                decoration: new BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                  gradient: new LinearGradient(
-                      colors: [
-                        Colors.pink,
-                        Colors.pink,
-                      ],
-                      begin: const FractionalOffset(0.2, 0.2),
-                      end: const FractionalOffset(1.0, 1.0),
-                      stops: [0.0, 1.0],
-                      tileMode: TileMode.clamp),
-                ),
-                child: MaterialButton(
-                    highlightColor: Colors.pink,
-                    //splashColor: Theme.Colors.loginGradientEnd,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 42.0),
-                      child: Text(
-                        "LOGIN",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20.0,
-                            fontFamily: "Montseratt"),
-                      ),
-                    ),
-                    onPressed: () async{
-                        String email = loginEmailController.text;
-                        String password = loginPasswordController.text;
-
-                      if(email.isEmpty || password.isEmpty){
-                          showDialogAlert('Email or password is empty');
-                      }else{
-                        try{
-                            FirebaseUser user = await fAuth.signInWithEmailAndPassword(email: email,password: password);
-
-                            if(user != null){
-                                print('$email is now Login');
-                            }
-                        }on PlatformException{
-                           showDialogAlert('Email or Password is incorrect');
-                        }
-                        
-                      }
-                  }
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 10.0),
-            child: FlatButton(
-                onPressed: () {},
-                child: Text(
-                  "Forgot Password?",
-                  style: TextStyle(
-                      decoration: TextDecoration.underline,
-                      color: Colors.grey,
-                      fontSize: 16.0,
-                      fontFamily: "Montserrat"),
-                )),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+        padding: EdgeInsets.only(top: 23.0),
+        child: Column(
+          children: <Widget>[
+            Stack(
+              alignment: Alignment.topCenter,
+              overflow: Overflow.visible,
               children: <Widget>[
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: new LinearGradient(
-                        colors: [
-                          Colors.grey[300],
-                          Colors.grey,
-                        ],
-                        begin: const FractionalOffset(0.0, 0.0),
-                        end: const FractionalOffset(1.0, 1.0),
-                        stops: [0.0, 1.0],
-                        tileMode: TileMode.clamp),
-                  ),
-                  width: 100.0,
-                  height: 1.0,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 15.0, right: 15.0),
-                  child: Text(
-                    "Or",
-                    style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 16.0,
-                        fontFamily: "Montseratt"),
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: new LinearGradient(
-                        colors: [
-                          Colors.grey,
-                          Colors.grey[300],
-                        ],
-                        begin: const FractionalOffset(0.0, 0.0),
-                        end: const FractionalOffset(1.0, 1.0),
-                        stops: [0.0, 1.0],
-                        tileMode: TileMode.clamp),
-                  ),
-                  width: 100.0,
-                  height: 1.0,
-                ),
-              ],
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(top: 10.0, right: 40.0),
-                child: GestureDetector(
-                  onTap: () => showInSnackBar("Facebook button pressed"),
-                  child: Container(
-                    padding: const EdgeInsets.all(15.0),
-                    decoration: new BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.blue,
-                    ),
-                    child: new Icon(
-                      FontAwesomeIcons.facebookF,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 10.0),
-                child: GestureDetector(
-                  onTap: () => showInSnackBar("Google button pressed"),
-                  child: Container(
-                    padding: const EdgeInsets.all(15.0),
-                    decoration: new BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.red,
-                    ),
-                    child: new Icon(
-                      FontAwesomeIcons.google,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+                // Card(
 
-  Widget _buildSignUp(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(top: 23.0),
-      child: Column(
-        children: <Widget>[
-          Stack(
-            alignment: Alignment.topCenter,
-            overflow: Overflow.visible,
-            children: <Widget>[
-              // Card(
-              //   elevation: 2.0,
-              //   color: Colors.white,
-              //   shape: RoundedRectangleBorder(
-              //     borderRadius: BorderRadius.circular(8.0),
-              //   ),
-              //child:
-              Container(
-                width: 300.0,
-                height: 360.0,
-                child: Column(
-                  children: <Widget>[
-                    // Padding(
-                    //   padding: EdgeInsets.only(
-                    //       top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
-                    //   child: TextField(
-                    //     focusNode: myFocusNodeName,
-                    //     controller: signupNameController,
-                    //     keyboardType: TextInputType.text,
-                    //     textCapitalization: TextCapitalization.words,
-                    //     style: TextStyle(
-                    //         fontFamily: "Montserrat",
-                    //         fontSize: 16.0,
-                    //         color: Colors.black),
-                    //     decoration: InputDecoration(
-                    //       border: InputBorder.none,
-                    //       icon: Icon(
-                    //         FontAwesomeIcons.user,
-                    //         color: Colors.pink,
-                    //       ),
-                    //       hintText: "Name",
-                    //       hintStyle: TextStyle(
-                    //           fontFamily: "Montserrat", fontSize: 16.0),
-                    //     ),
-                    //   ),
-                    // ),
-                    // Container(
-                    //   width: 250.0,
-                    //   height: 1.0,
-                    //   color: Colors.grey[400],
-                    // ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
-                      child: TextField(
-                        focusNode: myFocusNodeEmail,
-                        controller: signupEmailController,
-                        keyboardType: TextInputType.emailAddress,
-                        style: TextStyle(
-                            fontFamily: "Montserrat",
-                            fontSize: 16.0,
-                            color: Colors.black),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          icon: Icon(
-                            FontAwesomeIcons.envelope,
-                            color: Colors.pink,
+                // color: Colors.white,
+
+                // child:
+                Container(
+                  width: 300.0,
+                  height: 190.0,
+                  child: Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(
+                            top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
+                        child: TextField(
+                          focusNode: myFocusNodeEmailLogin,
+                          controller: loginEmailController,
+                          keyboardType: TextInputType.emailAddress,
+                          style: TextStyle(
+                              fontFamily: "Montserrat",
+                              fontSize: 16.0,
+                              color: Colors.black),
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            icon: Icon(
+                              FontAwesomeIcons.envelope,
+                              color: Colors.pink,
+                              size: 22.0,
+                            ),
+                            hintText: "Email Address",
+                            hintStyle: TextStyle(
+                                fontFamily: "Montserrat", fontSize: 16.0),
                           ),
-                          hintText: "Email Address",
-                          hintStyle: TextStyle(
-                              fontFamily: "Montserrat", fontSize: 16.0),
                         ),
                       ),
-                    ),
-                    Container(
-                      width: 250.0,
-                      height: 1.0,
-                      color: Colors.grey[400],
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
-                      child: TextField(
-                        focusNode: myFocusNodePassword,
-                        controller: signupPasswordController,
-                        obscureText: _obscureTextSignup,
-                        style: TextStyle(
-                            fontFamily: "Montserrat",
-                            fontSize: 16.0,
-                            color: Colors.black),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          icon: Icon(
-                            FontAwesomeIcons.lock,
-                            color: Colors.pink,
-                          ),
-                          hintText: "Password",
-                          hintStyle: TextStyle(
-                              fontFamily: "Montserrat", fontSize: 16.0),
-                          suffixIcon: GestureDetector(
-                            onTap: _toggleSignup,
-                            child: Icon(
-                              _obscureTextSignup
-                                  ? FontAwesomeIcons.eye
-                                  : FontAwesomeIcons.eyeSlash,
-                              size: 15.0,
+                      Container(
+                        width: 250.0,
+                        height: 1.0,
+                        color: Colors.grey[400],
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
+                        child: TextField(
+                          focusNode: myFocusNodePasswordLogin,
+                          controller: loginPasswordController,
+                          obscureText: _obscureTextLogin,
+                          style: TextStyle(
+                              fontFamily: "Montseratt",
+                              fontSize: 16.0,
+                              color: Colors.black),
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            icon: Icon(
+                              FontAwesomeIcons.lock,
+                              size: 22.0,
                               color: Colors.pink,
+                            ),
+                            hintText: "Password",
+                            hintStyle: TextStyle(
+                                fontFamily: "Montserrat", fontSize: 16.0),
+                            suffixIcon: GestureDetector(
+                              onTap: _toggleLogin,
+                              child: Icon(
+                                _obscureTextLogin
+                                    ? FontAwesomeIcons.eye
+                                    : FontAwesomeIcons.eyeSlash,
+                                size: 15.0,
+                                color: Colors.pink,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    Container(
-                      width: 250.0,
-                      height: 1.0,
-                      color: Colors.grey[400],
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
-                      child: TextField(
-                        controller: signupConfirmPasswordController,
-                        obscureText: _obscureTextSignupConfirm,
-                        style: TextStyle(
-                            fontFamily: "Montserrat",
-                            fontSize: 16.0,
-                            color: Colors.black),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          icon: Icon(
-                            FontAwesomeIcons.lock,
-                            color: Colors.pink,
-                          ),
-                          hintText: "Confirmation",
-                          hintStyle: TextStyle(
-                              fontFamily: "Montserrat", fontSize: 16.0),
-                          suffixIcon: GestureDetector(
-                            onTap: _toggleSignupConfirm,
-                            child: Icon(
-                              _obscureTextSignupConfirm
-                                  ? FontAwesomeIcons.eye
-                                  : FontAwesomeIcons.eyeSlash,
-                              size: 15.0,
-                              color: Colors.pink,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              //),
-              Container(
-                  margin: EdgeInsets.only(top: 340.0),
+                // ),
+                Container(
+                  margin: EdgeInsets.only(top: 170.0),
                   decoration: new BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(5.0)),
                     gradient: new LinearGradient(
@@ -628,61 +322,352 @@ class _LoginPageState extends State<LoginPage>
                         tileMode: TileMode.clamp),
                   ),
                   child: MaterialButton(
-                    highlightColor: Colors.transparent,
-                    splashColor: Theme.Colors.loginGradientEnd,
-                    //shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 42.0),
-                      child: Text(
-                        "SIGN UP",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 25.0,
-                            fontFamily: "Montseratt"),
+                      highlightColor: Colors.pink,
+                      //splashColor: Theme.Colors.loginGradientEnd,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10.0, horizontal: 42.0),
+                        child: Text(
+                          "LOGIN",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20.0,
+                              fontFamily: "Montseratt"),
+                        ),
+                      ),
+                      onPressed: () async{
+                          String email = loginEmailController.text;
+                          String password = loginPasswordController.text;
+
+                        if(email.isEmpty || password.isEmpty){
+                            showDialogAlert('Email or password is empty');
+                        }else{
+                        
+                          try{
+                              FirebaseUser user = await fAuth.signInWithEmailAndPassword(email: email,password: password);
+
+                              if(user != null){
+                                  print('$email is now Login');
+                              }
+                              
+                          }on PlatformException{
+                             showDialogAlert('Email or Password is incorrect');
+                          }
+                          
+                        }
+                    }
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 10.0),
+              child: FlatButton(
+                  onPressed: () {},
+                  child: Text(
+                    "Forgot Password?",
+                    style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        color: Colors.grey,
+                        fontSize: 16.0,
+                        fontFamily: "Montserrat"),
+                  )),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: new LinearGradient(
+                          colors: [
+                            Colors.grey[300],
+                            Colors.grey,
+                          ],
+                          begin: const FractionalOffset(0.0, 0.0),
+                          end: const FractionalOffset(1.0, 1.0),
+                          stops: [0.0, 1.0],
+                          tileMode: TileMode.clamp),
+                    ),
+                    width: 100.0,
+                    height: 1.0,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 15.0, right: 15.0),
+                    child: Text(
+                      "Or",
+                      style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 16.0,
+                          fontFamily: "Montseratt"),
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: new LinearGradient(
+                          colors: [
+                            Colors.grey,
+                            Colors.grey[300],
+                          ],
+                          begin: const FractionalOffset(0.0, 0.0),
+                          end: const FractionalOffset(1.0, 1.0),
+                          stops: [0.0, 1.0],
+                          tileMode: TileMode.clamp),
+                    ),
+                    width: 100.0,
+                    height: 1.0,
+                  ),
+                ],
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(top: 10.0, right: 40.0),
+                  child: GestureDetector(
+                    onTap: () => showInSnackBar("Facebook button pressed"),
+                    child: Container(
+                      padding: const EdgeInsets.all(15.0),
+                      decoration: new BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.blue,
+                      ),
+                      child: new Icon(
+                        FontAwesomeIcons.facebookF,
+                        color: Colors.white,
                       ),
                     ),
-                    onPressed: () async {
-                      String email = signupEmailController.text,
-                          password = signupPasswordController.text,
-                          confirmpass = signupConfirmPasswordController.text;
-                          
-
-                      if (email.isEmpty ||
-                          password.isEmpty ||
-                          confirmpass.isEmpty 
-                         ) {
-                        showDialogAlert('Please fill all the fields');
-                      } else if (password != confirmpass) {
-                        showDialogAlert('Confirm password does not match');
-                      } else if (password.length < 6) {
-                        showDialogAlert('Password must be 6 characters and above');
-                      }else{
-
-                        try{
-                          final newUser = await fAuth.createUserWithEmailAndPassword(
-                          email: email, password: confirmpass);
-                          FirebaseUser firebaseUser = await fAuth.currentUser();
-                        String id = firebaseUser.uid;
-                          
-                          if(newUser != null){
-                             
-                              Navigator.pushReplacement(context,
-                                MaterialPageRoute (builder: (context)=>FirsTimePage())
-                              );
-                          }                          
-
-                        }on PlatformException{
-                            showDialogAlert('Email is Already in use');
-                        }
-                      }
-                    },
-                  )),
-            ],
-          ),
-        ],
-      ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 10.0),
+                  child: GestureDetector(
+                    onTap: () => showInSnackBar("Google button pressed"),
+                    child: Container(
+                      padding: const EdgeInsets.all(15.0),
+                      decoration: new BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.red,
+                      ),
+                      child: new Icon(
+                        FontAwesomeIcons.google,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+     
     );
+  }
+
+  Widget _buildSignUp(BuildContext context) {
+    return Container(
+        padding: EdgeInsets.only(top: 23.0),
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding:prefix0.EdgeInsets.only(left:30.0),
+                          child: Stack(
+                alignment: Alignment.topCenter,
+                overflow: Overflow.visible,
+                children: <Widget>[
+           
+                  Container(
+                    width: 300.0,
+                    height: 360.0,
+                    child: Column(
+                      
+                      children: <Widget>[
+                       
+                        Padding(
+                          padding: EdgeInsets.only(
+                              top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
+                          child: TextField(
+                            focusNode: myFocusNodeEmail,
+                            controller: signupEmailController,
+                            keyboardType: TextInputType.emailAddress,
+                            style: TextStyle(
+                                fontFamily: "Montserrat",
+                                fontSize: 16.0,
+                                color: Colors.black),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              icon: Icon(
+                                FontAwesomeIcons.envelope,
+                                color: Colors.pink,
+                              ),
+                              hintText: "Email Address",
+                              hintStyle: TextStyle(
+                                  fontFamily: "Montserrat", fontSize: 16.0),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          width: 250.0,
+                          height: 1.0,
+                          color: Colors.grey[400],
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
+                          child: TextField(
+                            focusNode: myFocusNodePassword,
+                            controller: signupPasswordController,
+                            obscureText: _obscureTextSignup,
+                            style: TextStyle(
+                                fontFamily: "Montserrat",
+                                fontSize: 16.0,
+                                color: Colors.black),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              icon: Icon(
+                                FontAwesomeIcons.lock,
+                                color: Colors.pink,
+                              ),
+                              hintText: "Password",
+                              hintStyle: TextStyle(
+                                  fontFamily: "Montserrat", fontSize: 16.0),
+                              suffixIcon: GestureDetector(
+                                onTap: _toggleSignup,
+                                child: Icon(
+                                  _obscureTextSignup
+                                      ? FontAwesomeIcons.eye
+                                      : FontAwesomeIcons.eyeSlash,
+                                  size: 15.0,
+                                  color: Colors.pink,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          width: 250.0,
+                          height: 1.0,
+                          color: Colors.grey[400],
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
+                          child: TextField(
+                            controller: signupConfirmPasswordController,
+                            obscureText: _obscureTextSignupConfirm,
+                            style: TextStyle(
+                                fontFamily: "Montserrat",
+                                fontSize: 16.0,
+                                color: Colors.black),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              icon: Icon(
+                                FontAwesomeIcons.lock,
+                                color: Colors.pink,
+                              ),
+                              hintText: "Confirmation",
+                              hintStyle: TextStyle(
+                                  fontFamily: "Montserrat", fontSize: 16.0),
+                              suffixIcon: GestureDetector(
+                                onTap: _toggleSignupConfirm,
+                                child: Icon(
+                                  _obscureTextSignupConfirm
+                                      ? FontAwesomeIcons.eye
+                                      : FontAwesomeIcons.eyeSlash,
+                                  size: 15.0,
+                                  color: Colors.pink,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  //),
+                  Container(
+                      margin: EdgeInsets.only(top: 270.0),
+                      decoration: new BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                        gradient: new LinearGradient(
+                            colors: [
+                              Colors.pink,
+                              Colors.pink,
+                            ],
+                            begin: const FractionalOffset(0.2, 0.2),
+                            end: const FractionalOffset(1.0, 1.0),
+                            stops: [0.0, 1.0],
+                            tileMode: TileMode.clamp),
+                      ),
+                      child: MaterialButton(
+                        highlightColor: Colors.transparent,
+                        splashColor: Theme.Colors.loginGradientEnd,
+                        //shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 42.0),
+                          child: Text(
+                            "SIGN UP",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 25.0,
+                                fontFamily: "Montseratt"),
+                          ),
+                        ),
+                        onPressed: () async {
+                             
+                          String email = signupEmailController.text,
+                              password = signupPasswordController.text,
+                              confirmpass = signupConfirmPasswordController.text;
+                              
+
+                          if (email.isEmpty ||
+                              password.isEmpty ||
+                              confirmpass.isEmpty 
+                             ) {
+                            showDialogAlert('Please fill all the fields');
+                          } else if (password != confirmpass) {
+                            showDialogAlert('Confirm password does not match');
+                          } else if (password.length < 6) {
+                            showDialogAlert('Password must be 6 characters and above');
+                          }else{
+
+                              
+                            try{
+
+                              final newUser = await fAuth.createUserWithEmailAndPassword(
+                              email: email, password: confirmpass);
+                              FirebaseUser firebaseUser = await fAuth.currentUser();
+                            String id = firebaseUser.uid;
+                              
+                              if(newUser != null){
+                                 
+                                  Navigator.pushReplacement(context,
+                                    MaterialPageRoute (builder: (context)=>FirsTimePage())
+                                  );
+                                  
+                                 
+                              }     
+
+                                                 
+
+                            }on PlatformException{
+                                showDialogAlert('Email is Already in use');
+                            }
+                          }
+                        },
+                      )),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+  
   }
 
   void _onSignInButtonPress() {

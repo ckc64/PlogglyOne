@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:ploggly/pages/home.dart';
 
+import 'loginpages/ui/login_page.dart';
+
+
 class SplashScreenFull extends StatefulWidget {
   @override
   _SplashScreenState createState() => _SplashScreenState();
@@ -16,8 +19,8 @@ class _SplashScreenState extends State<SplashScreenFull> {
       seconds: 3
       ),(){
 
-       // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LoginPage()));
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Homepage()));
+       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LoginPage()));
+        //Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Homepage()));
      },
     );
   }
