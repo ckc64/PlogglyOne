@@ -5,8 +5,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ploggly/pages/activity_feed.dart';
 import 'package:ploggly/pages/profile.dart';
 import 'package:ploggly/pages/search.dart';
-import 'package:ploggly/pages/timelime.dart';
+import 'package:ploggly/pages/timeline.dart';
 import 'package:ploggly/pages/upload.dart';
+
 
 
 
@@ -49,20 +50,50 @@ class _HomepageState extends State<Homepage> {
   onPageChanged(int pageIndex){
     setState(() {
       this.pageIndex = pageIndex; 
+      
     });
   }
 
   onTap(int pageIndex){
+   
     pageController.animateToPage(
       pageIndex,
       duration: Duration(milliseconds: 300),
       curve: Curves.easeInOut
+     
     );
-  }
 
+      setState(() {
+         switch (pageIndex) {
+           case 0:
+                isTimeLine=true;
+                break;
+            case 1:
+                isTimeLine=false;
+                break;
+            case 2:
+                isTimeLine=false;
+                break;
+            case 3:
+                isTimeLine=false;
+                break;
+            case 4:
+                isTimeLine=false;
+                break;
+           default:
+         }
+      });
+
+        print(isTimeLine);
+         print(pageIndex);
+      
+     
+  }
+bool isTimeLine=true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       body: PageView(
         children: <Widget>[
           Timeline(),
@@ -79,6 +110,7 @@ class _HomepageState extends State<Homepage> {
       bottomNavigationBar: CupertinoTabBar(
           currentIndex: pageIndex,
           onTap: onTap,
+          //backgroundColor: isTimeLine ? Colors.transparent : Colors.white,
           activeColor: Colors.pink,
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.whatshot)),

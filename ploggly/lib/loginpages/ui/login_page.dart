@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart' as prefix0;
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -9,6 +8,7 @@ import 'package:ploggly/loginpages/style/theme.dart' as Theme;
 
 import 'package:ploggly/loginpages/utils/bubble_indication_painter.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:ploggly/pages/home.dart';
 
 
 
@@ -349,7 +349,9 @@ class _LoginPageState extends State<LoginPage>
                               FirebaseUser user = await fAuth.signInWithEmailAndPassword(email: email,password: password);
 
                               if(user != null){
-                                  print('$email is now Login');
+                                  Navigator.pushReplacement(context, 
+                                    MaterialPageRoute (builder: (context) => Homepage())
+                                  );
                               }
                               
                           }on PlatformException{
@@ -474,7 +476,7 @@ class _LoginPageState extends State<LoginPage>
         child: Column(
           children: <Widget>[
             Padding(
-              padding:prefix0.EdgeInsets.only(left:30.0),
+              padding:EdgeInsets.only(left:20.0),
                           child: Stack(
                 alignment: Alignment.topCenter,
                 overflow: Overflow.visible,
