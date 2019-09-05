@@ -7,13 +7,15 @@ import 'package:ploggly/pages/profile.dart';
 import 'package:ploggly/pages/search.dart';
 import 'package:ploggly/pages/timeline.dart';
 import 'package:ploggly/pages/upload.dart';
-
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 
 
 
 class Homepage extends StatefulWidget {
-  Homepage({Key key}) : super(key: key);
+
+  final String userID;
+  Homepage({Key key,this.userID}) : super(key: key);
 
   _HomepageState createState() => _HomepageState();
 }
@@ -25,13 +27,13 @@ class _HomepageState extends State<Homepage> {
 
   PageController pageController;
   int pageIndex =0;
-   void getCurrentUser() async{
-        final user = await fAuth.currentUser();
-        if(user != null){
-          loggedInUser = user;
-        }
+  //  void getCurrentUser() async{
+  //       final user = await fAuth.currentUser();
+  //       if(user != null){
+  //         loggedInUser = user;
+  //       }
 
-    }
+  //   }
 
 @override
   void initState() {
@@ -100,29 +102,50 @@ bool isTimeLine=true;
           ActivityFeed(),
           Upload(),
           Search(),
-          Profile(),
+          Profile(profileID: widget.userID),
         ],
         controller: pageController,
         onPageChanged: onPageChanged,
-        physics: NeverScrollableScrollPhysics(),
+        //physics: NeverScrollableScrollPhysics(),
       ),
       
-      bottomNavigationBar: CupertinoTabBar(
-          currentIndex: pageIndex,
-          onTap: onTap,
-          //backgroundColor: isTimeLine ? Colors.transparent : Colors.white,
-          activeColor: Colors.pink,
-          items: [
-            BottomNavigationBarItem(icon: Icon(Icons.whatshot)),
-            BottomNavigationBarItem(icon: Icon(Icons.notifications_active)),
-            BottomNavigationBarItem(icon: Icon(Icons.photo_camera,size:35.0)),
-            BottomNavigationBarItem(icon: Icon(Icons.search)),
-            BottomNavigationBarItem(icon: Icon(Icons.account_circle)),
+      bottomNavigationBar: CurvedNavigationBar(
+          index: pageIndex,
+          
+          height: 50.0,
+          items: <Widget>[
+            Icon(Icons.home, size: 25,color: Colors.white,),
+            Icon(Icons.whatshot, size: 25,color: Colors.white),
+            Icon(Icons.camera_alt, size: 25,color: Colors.white),
+            Icon(Icons.notifications_active, size: 35,color: Colors.white),
+            Icon(Icons.favorite, size: 25,color: Colors.white),
           ],
-      ),
+          color: Colors.pink,
+          
+          buttonBackgroundColor: Colors.pink,
+          backgroundColor: Colors.transparent,
+          animationCurve: Curves.easeInOut,
+          animationDuration: Duration(milliseconds: 600),
+          onTap: onTap,
+        ),
       
       
-
+      
+      
+      // CupertinoTabBar(
+      //     currentIndex: pageIndex,
+      //     onTap: onTap,
+      //     //backgroundColor: isTimeLine ? Colors.transparent : Colors.white,
+      //     activeColor: Colors.pink,
+      //     items: [
+      //       BottomNavigationBarItem(icon: Icon(Icons.whatshot)),
+      //       BottomNavigationBarItem(icon: Icon(Icons.notifications_active)),
+      //       BottomNavigationBarItem(icon: Icon(Icons.photo_camera,size:35.0)),
+      //       BottomNavigationBarItem(icon: Icon(Icons.search)),
+      //       BottomNavigationBarItem(icon: Icon(Icons.account_circle)),
+      //     ],
+      // ),
+      
     );
 
   }

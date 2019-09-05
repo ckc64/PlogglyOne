@@ -347,10 +347,11 @@ class _LoginPageState extends State<LoginPage>
                         
                           try{
                               FirebaseUser user = await fAuth.signInWithEmailAndPassword(email: email,password: password);
-
+                              FirebaseUser willLoggedInUser = await fAuth.currentUser();
+                              String userid =  willLoggedInUser.uid;
                               if(user != null){
                                   Navigator.pushReplacement(context, 
-                                    MaterialPageRoute (builder: (context) => Homepage())
+                                    MaterialPageRoute (builder: (context) => Homepage(userID:userid))
                                   );
                               }
                               

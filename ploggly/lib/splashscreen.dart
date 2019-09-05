@@ -19,8 +19,8 @@ class _SplashScreenState extends State<SplashScreenFull> {
       seconds: 3
       ),(){
 
-      // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LoginPage()));
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Homepage()));
+       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LoginPage()));
+        //Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Homepage()));
      },
     );
   }
