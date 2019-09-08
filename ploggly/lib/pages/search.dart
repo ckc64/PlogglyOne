@@ -20,7 +20,7 @@ class _SearchState extends State<Search> {
 
   handleSearch(String query){
       Future<QuerySnapshot> users = userRef
-      .where("name".toUpperCase(),isGreaterThanOrEqualTo:query)
+      .where("name",isGreaterThanOrEqualTo:query)
       .getDocuments();
       
       setState(() {
@@ -37,7 +37,6 @@ class _SearchState extends State<Search> {
         backgroundColor: Colors.white,
         title: TextFormField(
           controller: searchController,
-          textCapitalization: TextCapitalization.sentences,
           decoration: InputDecoration(
             hintText: "Search for a user...",
       

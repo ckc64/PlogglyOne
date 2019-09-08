@@ -25,20 +25,24 @@ class _HomepageState extends State<Homepage> {
    FirebaseAuth fAuth = FirebaseAuth.instance;
   FirebaseUser loggedInUser;
 
+
+
+
   PageController pageController;
   int pageIndex =0;
-  //  void getCurrentUser() async{
-  //       final user = await fAuth.currentUser();
-  //       if(user != null){
-  //         loggedInUser = user;
-  //       }
+   void getCurrentUser() async{
+        final user = await fAuth.currentUser();
+        if(user != null){
+          loggedInUser = user;
+        }
 
-  //   }
+    }
 
 @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    getCurrentUser();
     pageController = PageController();
   }
 
@@ -92,15 +96,18 @@ class _HomepageState extends State<Homepage> {
      
   }
 bool isTimeLine=true;
+
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       
       body: PageView(
         children: <Widget>[
           Timeline(),
           ActivityFeed(),
-          Upload(),
+          Upload(currentUser: widget.userID),
           Search(),
           Profile(profileID: widget.userID),
         ],

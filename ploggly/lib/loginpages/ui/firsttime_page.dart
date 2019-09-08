@@ -31,7 +31,7 @@ class _FirsTimePageState extends State<FirsTimePage> {
   FirebaseAuth fAuth = FirebaseAuth.instance;
   FirebaseUser loggedInUser;
   final StorageReference storageRef = FirebaseStorage.instance.ref();
-
+  String username;
 
   //unique for post 
 String profileID = Uuid().v4();
