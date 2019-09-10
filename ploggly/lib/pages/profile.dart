@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ploggly/pages/edit_profile.dart';
 import 'package:ploggly/widgets/header.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,10 +19,35 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
 
+
+
 FirebaseAuth fAuth = FirebaseAuth.instance;
   FirebaseUser loggedInUser;
-
+ 
  final userRef = Firestore.instance.collection('users');
+String currentUserID;
+
+@override
+  void setState(fn) {
+    // TODO: implement setState
+    super.setState(fn);
+    currentUserID = loggedInUser.uid;
+  }
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getCurrentUser();
+  }
+void getCurrentUser() async{
+        final user = await fAuth.currentUser();
+      
+          loggedInUser = user;
+        
+
+    }
+
+
 
 buildProfileHeader(){
   return FutureBuilder(
@@ -129,8 +155,48 @@ Column buildCountColumn(String label, int count){
   );
 }
 
+editProfile(){
+    Navigator.push(context,
+      MaterialPageRoute(builder: (context) => EditProfile(currentUserID: widget.profileID,))
+    );
+}
+Container buildButton({String text,Function function}){
+  return Container(
+    padding: EdgeInsets.only(top:2.0),
+    child: FlatButton(
+      onPressed: function,
+      child: Container(
+        width: 250.0,
+        height: 27.0,
+        child: Text(
+          text,
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: 'Montserrat',
+          ),
+        ),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: Colors.pink,
+          border: Border.all(
+            color: Colors.pink,
+          ),
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+      ),
+    ),
+  );
+}
+
 buildProfileButton(){
-  return Text("Profile Button Here");
+  //edit wen not ur profile
+  bool isProfileOwner = widget.profileID == widget.profileID;
+  if(isProfileOwner){
+    return buildButton(
+      text: "Edit Profile",
+      function: editProfile
+    );
+  }
 }
 
   @override

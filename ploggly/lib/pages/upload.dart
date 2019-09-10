@@ -141,7 +141,7 @@ Container buildSplashScreen(){
 
         docRef.get().then((doc){
             if (doc.exists) {
-
+                
                try{
        postRef
           .document(widget.currentUser)
