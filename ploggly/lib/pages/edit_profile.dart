@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ploggly/loginpages/ui/login_page.dart';
+import 'package:ploggly/pages/profile.dart';
+import 'package:ploggly/pages/search.dart';
 import 'package:ploggly/widgets/progress.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 class EditProfile extends StatefulWidget {
 
   final String currentUserID;
@@ -20,7 +22,14 @@ class _EditProfileState extends State<EditProfile> {
  TextEditingController displayNameController = new TextEditingController();
  TextEditingController bioController = new TextEditingController();
 
+ final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  bool _bioValid = true,
+  _displayNameValid = true;
+
+
   final userRef = Firestore.instance.collection('users');
+  
   @override
   void initState() {
     // TODO: implement initState
@@ -70,6 +79,7 @@ class _EditProfileState extends State<EditProfile> {
           controller: displayNameController,
           decoration: InputDecoration(
             hintText: "Update Display Name",
+            errorText: _displayNameValid ? null : "Display Name Too Short"
           ),
         ),
       ],
@@ -90,17 +100,46 @@ class _EditProfileState extends State<EditProfile> {
           ),
         ),
         TextField(
-          controller: displayNameController,
+          controller: bioController,
           decoration: InputDecoration(
             hintText: "Update Bio",
+             errorText: _bioValid ? null : "Bio Too Long"
           ),
         ),
       ],
     );
   }
+
+  updateProfileData(){
+      setState(() {
+        displayNameController.text.trim().length < 3 || displayNameController.text.isEmpty ?
+        _displayNameValid = false : _displayNameValid = true;
+        bioController.text.trim().length > 100 ? _bioValid=false : _bioValid =true;
+      });
+
+      if(_displayNameValid && _bioValid){
+          userRef.document(widget.currentUserID).updateData({
+            "name":displayNameController.text,
+            "bio":bioController.text,
+          });
+
+
+          SnackBar snackBar = SnackBar(content: Text("Profile Update!"),);
+          _scaffoldKey.currentState.showSnackBar(snackBar);
+      }
+  }
+
+  logout() async {
+    await fAuth.signOut();
+    Navigator.pushReplacement(context, 
+      MaterialPageRoute(builder: (context)=>LoginPage())
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Text(
@@ -112,7 +151,9 @@ class _EditProfileState extends State<EditProfile> {
         actions: <Widget>[
           
           IconButton(
-            onPressed: ()=>Navigator.pop(context),
+            onPressed: ()=>Navigator.pushReplacement(context,
+      MaterialPageRoute(builder: (context) => Profile(profileID: widget.currentUserID,))
+    ),
             icon: Icon(Icons.done,
             size: 30.0,
             color: Colors.green,
@@ -153,7 +194,7 @@ class _EditProfileState extends State<EditProfile> {
                   ),
                 ),
                 RaisedButton(
-                  onPressed: ()=>print('update profile data'),
+                  onPressed: updateProfileData,
                   color: Colors.pink,
                   child: Text(
                     "Update Profile",
@@ -167,7 +208,7 @@ class _EditProfileState extends State<EditProfile> {
                 Padding(
                   padding: EdgeInsets.all(16.0),
                   child: FlatButton.icon(
-                    onPressed: ()=>print('logout'),
+                    onPressed: logout,
                     icon: Icon(Icons.cancel,
                     color:Colors.red
                     ),

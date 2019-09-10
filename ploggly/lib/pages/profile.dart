@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:ploggly/pages/edit_profile.dart';
+import 'package:ploggly/pages/post.dart';
 import 'package:ploggly/widgets/header.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ploggly/widgets/progress.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'upload.dart';
 
 class Profile extends StatefulWidget {
   final String profileID;
@@ -20,12 +22,15 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
 
 
-
 FirebaseAuth fAuth = FirebaseAuth.instance;
   FirebaseUser loggedInUser;
  
  final userRef = Firestore.instance.collection('users');
+   final postRef = Firestore.instance.collection('posts');
 String currentUserID;
+bool isLoading =false;
+int postCount =0;
+List<Post> posts = [];
 
 @override
   void setState(fn) {
@@ -38,7 +43,28 @@ String currentUserID;
     // TODO: implement initState
     super.initState();
     getCurrentUser();
+    getProfilePost();
   }
+
+  getProfilePost() async{
+    setState(() {
+      isLoading = true;
+    });
+    QuerySnapshot snapshot = await postRef.document("XLf6SDjq27qh70dZF8Ct")
+    .collection('userPosts')
+    .orderBy('timestamp',descending:true)
+    .getDocuments();
+
+    setState(() {
+     isLoading =false;
+     postCount = snapshot.documents.length;
+    
+     posts = snapshot.documents.map((doc) => Post.fromDocument(doc))
+     .toList();
+    });
+  }
+
+
 void getCurrentUser() async{
         final user = await fAuth.currentUser();
       
@@ -73,7 +99,7 @@ buildProfileHeader(){
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
-                        buildCountColumn("posts",0),
+                        buildCountColumn("posts",postCount),
                         buildCountColumn("followers",0),
                         buildCountColumn("following",0),
                       ],
@@ -156,7 +182,7 @@ Column buildCountColumn(String label, int count){
 }
 
 editProfile(){
-    Navigator.push(context,
+    Navigator.pushReplacement(context,
       MaterialPageRoute(builder: (context) => EditProfile(currentUserID: widget.profileID,))
     );
 }
@@ -199,13 +225,26 @@ buildProfileButton(){
   }
 }
 
+buildProfilePost(){
+  if(isLoading){
+    return circularProgress();
+  }
+  return Column(
+    children: posts,
+  );
+}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: header("profile"),
         body: ListView(
           children: <Widget>[
-              buildProfileHeader()
+              buildProfileHeader(),
+              Divider(
+                height: 0.0,
+              ),
+              buildProfilePost()
           ],
         ),
     );
