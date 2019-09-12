@@ -14,6 +14,8 @@ class Post extends StatefulWidget {
   final String mediaUrl;
   final dynamic likes;
 
+
+
   Post({
      this.postId,
   this.ownerId,
@@ -65,6 +67,7 @@ class Post extends StatefulWidget {
 
 class _PostState extends State<Post> {
 
+
 final String postId;
   final String ownerId;
   final String username;
@@ -84,8 +87,9 @@ final String postId;
   this.likes,
   this.likeCount,
   });
-
+ 
   buildPostHeader(){
+     //final userRef = Firestore.instance.collection('users');
     return FutureBuilder(
       future: userRef.document(ownerId).get(),
       builder: (context,snapshot){

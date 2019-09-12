@@ -3,18 +3,21 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 import 'package:ploggly/loginpages/style/theme.dart' as Theme;
 
 import 'package:ploggly/loginpages/utils/bubble_indication_painter.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:ploggly/pages/home.dart';
+import 'package:ploggly/widgets/progress.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
 import 'firsttime_page.dart';
 
 class LoginPage extends StatefulWidget {
+ 
   LoginPage({Key key}) : super(key: key);
 
   @override
@@ -23,6 +26,9 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage>
     with SingleTickerProviderStateMixin {
+
+
+
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   final FocusNode myFocusNodeEmailLogin = FocusNode();
@@ -56,69 +62,73 @@ class _LoginPageState extends State<LoginPage>
   
   bool showSpinner = false;
 
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
       key: _scaffoldKey,
-      body: NotificationListener<OverscrollIndicatorNotification>(
-        onNotification: (overscroll) {
-          overscroll.disallowGlow();
-        },
-        child: SingleChildScrollView(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height >= 775.0
-                ? MediaQuery.of(context).size.height
-                : 775.0,
-            decoration: new BoxDecoration(
-              color: Colors.white,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                Padding(
-                    padding: EdgeInsets.only(top: 100.0),
-                    child: Text(
-                      'ploggly',
-                      style: TextStyle(
-                          color: Colors.pink,
-                          fontFamily: 'Pacifico',
-                          fontSize: 35.0),
-                    )),
-                Padding(
-                  padding: EdgeInsets.only(top: 50.0),
-                  child: _buildMenuBar(context),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: PageView(
-                    controller: _pageController,
-                    onPageChanged: (i) {
-                      if (i == 0) {
-                        setState(() {
-                          right = Colors.pink;
-                          left = Colors.white;
-                        });
-                      } else if (i == 1) {
-                        setState(() {
-                          right = Colors.white;
-                          left = Colors.pink;
-                        });
-                      }
-                    },
-                    children: <Widget>[
-                      new ConstrainedBox(
-                        constraints: const BoxConstraints.expand(),
-                        child: _buildSignIn(context),
-                      ),
-                      new ConstrainedBox(
-                        constraints: const BoxConstraints.expand(),
-                        child: _buildSignUp(context),
-                      ),
-                    ],
+      body:ModalProgressHUD(
+              inAsyncCall: showSpinner,
+              child: NotificationListener<OverscrollIndicatorNotification>(
+          onNotification: (overscroll) {
+            overscroll.disallowGlow();
+          },
+          child: SingleChildScrollView(
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height >= 775.0
+                  ? MediaQuery.of(context).size.height
+                  : 775.0,
+              decoration: new BoxDecoration(
+                color: Colors.white,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Padding(
+                      padding: EdgeInsets.only(top: 100.0),
+                      child: Text(
+                        'ploggly',
+                        style: TextStyle(
+                            color: Colors.pink,
+                            fontFamily: 'Pacifico',
+                            fontSize: 35.0),
+                      )),
+                  Padding(
+                    padding: EdgeInsets.only(top: 50.0),
+                    child: _buildMenuBar(context),
                   ),
-                ),
-              ],
+                  Expanded(
+                    flex: 2,
+                    child: PageView(
+                      controller: _pageController,
+                      onPageChanged: (i) {
+                        if (i == 0) {
+                          setState(() {
+                            right = Colors.pink;
+                            left = Colors.white;
+                          });
+                        } else if (i == 1) {
+                          setState(() {
+                            right = Colors.white;
+                            left = Colors.pink;
+                          });
+                        }
+                      },
+                      children: <Widget>[
+                        new ConstrainedBox(
+                          constraints: const BoxConstraints.expand(),
+                          child: _buildSignIn(context),
+                        ),
+                        new ConstrainedBox(
+                          constraints: const BoxConstraints.expand(),
+                          child: _buildSignUp(context),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -135,8 +145,12 @@ class _LoginPageState extends State<LoginPage>
     super.dispose();
   }
 
+
+
   @override
   void initState() {
+
+    
     super.initState();
 
     SystemChrome.setPreferredOrientations([
@@ -145,6 +159,7 @@ class _LoginPageState extends State<LoginPage>
     ]);
 
     _pageController = PageController();
+   
   }
 
   void showDialogAlert(String txt) {
@@ -221,6 +236,8 @@ class _LoginPageState extends State<LoginPage>
     );
   }
 
+  
+ 
   Widget _buildSignIn(BuildContext context) {
     return Container(
         padding: EdgeInsets.only(top: 23.0),
@@ -340,19 +357,34 @@ class _LoginPageState extends State<LoginPage>
                       onPressed: () async{
                           String email = loginEmailController.text;
                           String password = loginPasswordController.text;
+                          
+                         
 
                         if(email.isEmpty || password.isEmpty){
                             showDialogAlert('Email or password is empty');
                         }else{
                         
                           try{
+                            setState(() {
+                              showSpinner=true;
+                              });
                               FirebaseUser user = await fAuth.signInWithEmailAndPassword(email: email,password: password);
+                           
+                           
                               FirebaseUser willLoggedInUser = await fAuth.currentUser();
                               String userid =  willLoggedInUser.uid;
-                              if(user != null){
-                                  Navigator.pushReplacement(context, 
-                                    MaterialPageRoute (builder: (context) => Homepage(userID:userid))
-                                  );
+                              SharedPreferences prefs = await SharedPreferences.getInstance();
+                              if(user != null){                   
+                                  prefs.setString("email", email);
+                                  prefs.setString("uid", userid);
+                                  prefs.setString("password", password);
+   
+                                   Navigator.pushReplacement(context, 
+                                      MaterialPageRoute (builder: (context) => Homepage(userID:userid))
+                                    );
+                                 setState(() {
+           showSpinner=false;
+          });
                               }
                               
                           }on PlatformException{
@@ -641,7 +673,9 @@ class _LoginPageState extends State<LoginPage>
 
                               
                             try{
-
+                              setState(() {
+           showSpinner=true;
+          });
                               final newUser = await fAuth.createUserWithEmailAndPassword(
                               email: email, password: confirmpass);
                               FirebaseUser firebaseUser = await fAuth.currentUser();
@@ -653,7 +687,9 @@ class _LoginPageState extends State<LoginPage>
                                     MaterialPageRoute (builder: (context)=>FirsTimePage())
                                   );
                                   
-                                 
+                                 setState(() {
+           showSpinner=false;
+          });
                               }     
 
                                                  
@@ -670,7 +706,7 @@ class _LoginPageState extends State<LoginPage>
           ],
         ),
       );
-  
+
   }
 
   void _onSignInButtonPress() {

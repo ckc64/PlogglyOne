@@ -25,7 +25,8 @@ class _HomepageState extends State<Homepage> {
    FirebaseAuth fAuth = FirebaseAuth.instance;
   FirebaseUser loggedInUser;
 
-
+  int currentPageIndex;
+  int lastPageIndex;
 
 
   PageController pageController;
@@ -43,6 +44,8 @@ class _HomepageState extends State<Homepage> {
     // TODO: implement initState
     super.initState();
     getCurrentUser();
+    //pageIndex = 0;
+    //currentPageIndex = 0;
     pageController = PageController();
   }
 
@@ -72,24 +75,33 @@ class _HomepageState extends State<Homepage> {
       setState(() {
          switch (pageIndex) {
            case 0:
-                isTimeLine=true;
+                currentPageIndex = pageIndex;
+                isTimeLine=true;    
                 break;
             case 1:
+            currentPageIndex = pageIndex;
                 isTimeLine=false;
                 break;
             case 2:
+            currentPageIndex = pageIndex;
                 isTimeLine=false;
                 break;
             case 3:
+            currentPageIndex = pageIndex;
                 isTimeLine=false;
                 break;
             case 4:
+            currentPageIndex = pageIndex;
                 isTimeLine=false;
                 break;
            default:
          }
-      });
 
+
+         print("Curr : $currentPageIndex");
+         print("Last Page : $lastPageIndex");
+      });
+        
         print(isTimeLine);
          print(pageIndex);
       
@@ -97,23 +109,30 @@ class _HomepageState extends State<Homepage> {
   }
 bool isTimeLine=true;
 
+Future<bool> _onBackPressed(){
+  
+}
+
   @override
   Widget build(BuildContext context) {
 
 
     return Scaffold(
       
-      body: PageView(
-        children: <Widget>[
-          Timeline(),
-          ActivityFeed(),
-          Upload(currentUser: widget.userID),
-          Search(),
-          Profile(profileID: widget.userID),
-        ],
-        controller: pageController,
-        onPageChanged: onPageChanged,
-        //physics: NeverScrollableScrollPhysics(),
+      body: WillPopScope(
+        onWillPop: _onBackPressed,
+              child: PageView(
+          children: <Widget>[
+            Timeline(),
+            ActivityFeed(),
+            Upload(currentUser: widget.userID),
+            Search(),
+            Profile(profileID: widget.userID),
+          ],
+          controller: pageController,
+          onPageChanged: onPageChanged,
+          //physics: NeverScrollableScrollPhysics(),
+        ),
       ),
       
       bottomNavigationBar: CurvedNavigationBar(

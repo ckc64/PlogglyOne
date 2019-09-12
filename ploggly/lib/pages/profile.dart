@@ -32,17 +32,17 @@ bool isLoading =false;
 int postCount =0;
 List<Post> posts = [];
 
-@override
-  void setState(fn) {
-    // TODO: implement setState
-    super.setState(fn);
-    currentUserID = loggedInUser.uid;
-  }
+void getCurrentUserID(){
+  setState(() {
+   currentUserID = loggedInUser.uid; 
+  });
+}
 @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getCurrentUser();
+    //getCurrentUserID();
     getProfilePost();
   }
 
@@ -50,7 +50,9 @@ List<Post> posts = [];
     setState(() {
       isLoading = true;
     });
-    QuerySnapshot snapshot = await postRef.document("XLf6SDjq27qh70dZF8Ct")
+    QuerySnapshot snapshot = await postRef.document(widget.profileID)
+
+
     .collection('userPosts')
     .orderBy('timestamp',descending:true)
     .getDocuments();
@@ -216,7 +218,7 @@ Container buildButton({String text,Function function}){
 
 buildProfileButton(){
   //edit wen not ur profile
-  bool isProfileOwner = widget.profileID == widget.profileID;
+  bool isProfileOwner = loggedInUser.uid == widget.profileID;
   if(isProfileOwner){
     return buildButton(
       text: "Edit Profile",
@@ -226,9 +228,7 @@ buildProfileButton(){
 }
 
 buildProfilePost(){
-  if(isLoading){
-    return circularProgress();
-  }
+  
   return Column(
     children: posts,
   );

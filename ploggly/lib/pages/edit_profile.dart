@@ -6,6 +6,7 @@ import 'package:ploggly/pages/profile.dart';
 import 'package:ploggly/pages/search.dart';
 import 'package:ploggly/widgets/progress.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 class EditProfile extends StatefulWidget {
 
   final String currentUserID;
@@ -130,6 +131,10 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   logout() async {
+    SharedPreferences prefs;
+    prefs = await SharedPreferences.getInstance();
+     prefs.clear();
+ 
     await fAuth.signOut();
     Navigator.pushReplacement(context, 
       MaterialPageRoute(builder: (context)=>LoginPage())
