@@ -1,12 +1,17 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ploggly/pages/search.dart';
 import 'package:ploggly/widgets/custom_image.dart';
 import 'package:ploggly/widgets/progress.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'home.dart';
+import 'package:animator/animator.dart';
 
 class Post extends StatefulWidget {
-
+  
   final String postId;
   final String ownerId;
   final String username;
@@ -67,8 +72,8 @@ class Post extends StatefulWidget {
 }
 
 class _PostState extends State<Post> {
-
-
+  
+final String currentUserID = loggedInUser?.uid;
 final String postId;
   final String ownerId;
   final String username;
@@ -77,7 +82,9 @@ final String postId;
   final String mediaUrl;
   int likeCount;
   Map likes;
-
+  bool isLiked;
+  bool showHeart=false;
+  
   _PostState({
      this.postId,
   this.ownerId,
@@ -88,6 +95,7 @@ final String postId;
   this.likes,
   this.likeCount,
   });
+ 
  
   buildPostHeader(){
      //final userRef = Firestore.instance.collection('users');
@@ -123,12 +131,59 @@ final String postId;
     );
   }
 
+  handleLikePost(){
+    final postRef = Firestore.instance.collection('posts');
+    bool _isLiked = likes[currentUserID]==true;
+    if(_isLiked){
+      postRef
+      .document(ownerId)
+      .collection('userPosts')
+      .document(postId)
+      .updateData({'likes.$currentUserID':false});
+      setState(() {
+       likeCount -= 1;
+       isLiked = false;
+       likes[currentUserID]=false;
+      });
+    }else if(!_isLiked){
+       postRef
+      .document(ownerId)
+      .collection('userPosts')
+      .document(postId)
+      .updateData({'likes.$currentUserID':true});
+      setState(() {
+       likeCount += 1;
+       isLiked = true;
+       likes[currentUserID]=true;
+       showHeart = true;
+      });
+      Timer(Duration(milliseconds: 700),(){
+          setState(() {
+            showHeart = false; 
+          });
+      });
+    }
+  }
+
   buildPostImage(){
     return GestureDetector(
-      onDoubleTap: ()=>print('likng post'),
+      onDoubleTap: handleLikePost,
       child: Stack(
+        alignment: Alignment.center,
         children: <Widget>[
           cachedNetworkImage(mediaUrl),
+          
+         showHeart ? Animator(
+            duration: Duration(milliseconds: 300),
+            tween: Tween(begin: 0.8, end:1.4),
+            curve: Curves.easeIn,
+            cycles: 0,
+            builder: (anim)=>Transform.scale(
+              scale: anim.value,
+              child: Icon(Icons.favorite,size: 150.0,color:Colors.redAccent),
+            ),
+          ) : Text(""),
+        
         ],
       ),
     );
@@ -144,8 +199,9 @@ final String postId;
               padding: EdgeInsets.only(top:40.0,left: 20.0),
             ),
             GestureDetector(
+                onTap: handleLikePost,
                 child: Icon(
-                  Icons.favorite_border,
+                  isLiked ? Icons.favorite : Icons.favorite_border,
                   size:28.0,
                   color:Colors.pink,
                 ),
@@ -193,6 +249,7 @@ final String postId;
 
   @override
   Widget build(BuildContext context) {
+    isLiked = (likes[currentUserID]==true);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
