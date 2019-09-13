@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ploggly/pages/search.dart';
+import 'package:ploggly/widgets/custom_image.dart';
 import 'package:ploggly/widgets/progress.dart';
 
 class Post extends StatefulWidget {
@@ -127,7 +128,7 @@ final String postId;
       onDoubleTap: ()=>print('likng post'),
       child: Stack(
         children: <Widget>[
-          Image.network(mediaUrl),
+          cachedNetworkImage(mediaUrl),
         ],
       ),
     );

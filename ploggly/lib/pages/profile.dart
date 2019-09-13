@@ -4,6 +4,7 @@ import 'package:ploggly/pages/post.dart';
 import 'package:ploggly/widgets/header.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ploggly/widgets/post_tile.dart';
 import 'package:ploggly/widgets/progress.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'upload.dart';
@@ -28,6 +29,8 @@ FirebaseAuth fAuth = FirebaseAuth.instance;
  final userRef = Firestore.instance.collection('users');
    final postRef = Firestore.instance.collection('posts');
 String currentUserID;
+
+String postOrientation="grid";
 bool isLoading =false;
 int postCount =0;
 List<Post> posts = [];
@@ -43,7 +46,7 @@ void getCurrentUserID(){
     super.initState();
     getCurrentUser();
     //getCurrentUserID();
-    getProfilePost();
+   getProfilePost();
   }
 
   getProfilePost() async{
@@ -227,12 +230,71 @@ buildProfileButton(){
   }
 }
 
-buildProfilePost(){
-  
-  return Column(
-    children: posts,
-  );
+setPostOrientation(String postOrientation){
+  setState(() {
+     this.postOrientation = postOrientation;
+  });
+ 
 }
+buildProfilePost(){
+  if(isLoading){
+    return circularProgress();
+  // }else if(posts.isEmpty){
+  //   Center(
+  //     child: Text("No Posts",
+  //       style: TextStyle(
+  //         color: Colors.redAccent,
+  //         fontSize: 40.0,
+  //         fontFamily: 'Montserrat',
+  //         fontWeight: FontWeight.bold
+  //       ),
+  //     ),
+  //   );
+  }
+  else if(postOrientation == "grid"){
+      
+    List<GridTile>gridTiles = [];
+      posts.forEach((post){
+            gridTiles.add(GridTile(
+              child:  PostTile(post)
+            ));
+      });
+      return GridView.count(
+        crossAxisCount: 3,
+        childAspectRatio: 1.0,
+        mainAxisSpacing: 1.5,
+        crossAxisSpacing: 1.5,
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        children: gridTiles,
+      );
+      
+  } else if(postOrientation == "list"){
+    
+      return Column(
+          children: posts,
+        );
+  }
+ 
+}
+
+  Row buildTogglePostOrientation(){
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          IconButton(
+            onPressed: ()=>setPostOrientation("grid"),
+            icon: Icon(Icons.grid_on),
+            color:postOrientation == "grid" ? Colors.pink : Colors.grey,
+          ),
+           IconButton(
+            onPressed: ()=>setPostOrientation("list"),
+            icon: Icon(Icons.list),
+            color:postOrientation == "list" ? Colors.pink : Colors.grey,
+          ),
+        ],
+      );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -241,6 +303,8 @@ buildProfilePost(){
         body: ListView(
           children: <Widget>[
               buildProfileHeader(),
+              Divider(),
+              buildTogglePostOrientation(),
               Divider(
                 height: 0.0,
               ),
