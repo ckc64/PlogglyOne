@@ -4,12 +4,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ploggly/pages/comments.dart';
-import 'package:ploggly/pages/search.dart';
+import 'package:ploggly/pages/home.dart';
+import 'package:ploggly/pages/user.dart';
 import 'package:ploggly/widgets/custom_image.dart';
 import 'package:ploggly/widgets/progress.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'home.dart';
 import 'package:animator/animator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Post extends StatefulWidget {
   
@@ -20,8 +21,9 @@ class Post extends StatefulWidget {
   final String description;
   final String mediaUrl;
   final dynamic likes;
+  User currentUser;
 
-
+//fix current user id
 
   Post({
      this.postId,
@@ -59,6 +61,8 @@ class Post extends StatefulWidget {
     return count;
   }
 
+
+
   @override
   _PostState createState() => _PostState(
     postId: this.postId,
@@ -72,9 +76,37 @@ class Post extends StatefulWidget {
   );
 }
 
+
+ 
+
+   String email="",uid="",password="";
 class _PostState extends State<Post> {
+
+ 
+  //bool isLoggedIn=false;
+  Future<Null> _function() async {
+    SharedPreferences prefs;
+    prefs = await SharedPreferences.getInstance();
+    this.setState(() {
+      if (prefs.getString("email") != null && prefs.getString("uid") !=null && prefs.getString("password") !=null) {
+        email = prefs.getString("email");
+        uid = prefs.getString("uid");
+        password = prefs.getString("password");
+        print("$email,$uid,$password");
+        
+
+      }
+    });
+  }
+
+    @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _function();
+  }
   
-final String currentUserID = loggedInUser?.uid;
+final String currentUserID=loggedInUser.uid;
 final String postId;
   final String ownerId;
   final String username;
@@ -96,10 +128,11 @@ final String postId;
   this.likes,
   this.likeCount,
   });
+
  
- 
+
   buildPostHeader(){
-     //final userRef = Firestore.instance.collection('users');
+     final userRef = Firestore.instance.collection('users');
     return FutureBuilder(
       future: userRef.document(ownerId).get(),
       builder: (context,snapshot){
@@ -133,14 +166,17 @@ final String postId;
   }
 
   handleLikePost(){
+  
     final postRef = Firestore.instance.collection('posts');
     bool _isLiked = likes[currentUserID]==true;
+ 
     if(_isLiked){
       postRef
       .document(ownerId)
       .collection('userPosts')
       .document(postId)
       .updateData({'likes.$currentUserID':false});
+      removeLikeToActivityFeed();
       setState(() {
        likeCount -= 1;
        isLiked = false;
@@ -152,6 +188,7 @@ final String postId;
       .collection('userPosts')
       .document(postId)
       .updateData({'likes.$currentUserID':true});
+         addLikeToActivityFeed();
       setState(() {
        likeCount += 1;
        isLiked = true;
@@ -164,6 +201,62 @@ final String postId;
           });
       });
     }
+  }
+ 
+
+  removeLikeToActivityFeed(){
+    final activityFeedRef = Firestore.instance.collection('feed');
+  final userRef = Firestore.instance.collection('users').document(currentUserID);
+      userRef.get().then((doc){
+            if (doc.exists) {
+                  activityFeedRef
+      .document(ownerId)
+      .collection('feedItems')
+      .document(postId)
+      .get().then((doc){
+          if(doc.exists){
+              doc.reference.delete();
+          }
+      });
+    } else {
+        // doc.data() will be undefined in this case
+        print("remove like No such document!");
+    }
+        });
+    
+
+  }
+
+  addLikeToActivityFeed(){
+final activityFeedRef = Firestore.instance.collection('feed');
+  final userRef = Firestore.instance.collection('users').document(currentUserID);
+
+    //bool isNotPostOwner = currentUserID != ownerId;
+
+    //if(isNotPostOwner){
+        userRef.get().then((doc){
+            if (doc.exists) {
+                  activityFeedRef
+      .document(ownerId)
+      .collection('feedItems')
+      .document(postId)
+      .setData({
+        "type":"like",
+        "username":doc.data['username'],
+        "userId":currentUserID,
+        "userProfileImg":doc.data['profpic'],
+        "postId":postId,
+        "mediaUrl":mediaUrl,
+        "timestamp":DateTime.now()
+      });     
+    } else {
+        // doc.data() will be undefined in this case
+        print("add like No such document!");
+    }
+        });
+    //}
+ 
+
   }
 
   buildPostImage(){

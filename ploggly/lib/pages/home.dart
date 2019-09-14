@@ -8,12 +8,17 @@ import 'package:ploggly/pages/search.dart';
 import 'package:ploggly/pages/timeline.dart';
 import 'package:ploggly/pages/upload.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:ploggly/pages/user.dart';
 
 
 
-
+FirebaseAuth fAuth = FirebaseAuth.instance;
+  FirebaseUser loggedInUser;
+  final userRef = Firestore.instance.collection('users');
+  User currentUser;
+  DocumentSnapshot doc;
 class Homepage extends StatefulWidget {
-
+ 
   final String userID;
   Homepage({Key key,this.userID}) : super(key: key);
 
@@ -22,12 +27,11 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
 
-   FirebaseAuth fAuth = FirebaseAuth.instance;
-  FirebaseUser loggedInUser;
+   
 
   int currentPageIndex;
   int lastPageIndex;
-
+ 
 
   PageController pageController;
   int pageIndex =0;
@@ -35,9 +39,17 @@ class _HomepageState extends State<Homepage> {
         final user = await fAuth.currentUser();
         if(user != null){
           loggedInUser = user;
+         doc = await userRef.document(loggedInUser.uid).get();
+         setState(() {
+            currentUser = User.fromDocument(doc);
+         });
+          
+         
         }
-
+ 
     }
+
+    
 
 @override
   void initState() {
@@ -46,6 +58,7 @@ class _HomepageState extends State<Homepage> {
     getCurrentUser();
     //pageIndex = 0;
     //currentPageIndex = 0;
+   
     pageController = PageController();
   }
 
@@ -102,8 +115,7 @@ class _HomepageState extends State<Homepage> {
          print("Last Page : $lastPageIndex");
       });
         
-        print(isTimeLine);
-         print(pageIndex);
+  
       
      
   }

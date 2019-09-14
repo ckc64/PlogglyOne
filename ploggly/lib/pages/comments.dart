@@ -74,7 +74,6 @@ class _CommentsState extends State<Comments> {
   }
 
   addComment(){
-print(loggedInUser.uid);
      final userRef = Firestore.instance.collection('users').document(loggedInUser.uid);
       
       
