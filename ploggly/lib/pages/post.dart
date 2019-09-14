@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ploggly/pages/comments.dart';
 import 'package:ploggly/pages/search.dart';
 import 'package:ploggly/widgets/custom_image.dart';
 import 'package:ploggly/widgets/progress.dart';
@@ -208,7 +209,12 @@ final String postId;
             ),
             Padding(padding: EdgeInsets.only(right: 20.0),),
             GestureDetector(
-              onTap: ()=>print('show comments'),
+              onTap: ()=>showComments(
+                context,
+                postId:postId,
+                ownerId:ownerId,
+                mediaUrl:mediaUrl
+              ),
                 child: Icon(
                   Icons.chat,
                   size:28.0,
@@ -260,4 +266,15 @@ final String postId;
       ],
     );
   }
+}
+
+showComments(BuildContext context,{String postId,String ownerId,String mediaUrl}){
+
+  Navigator.push(context,MaterialPageRoute(builder: (context){
+    return Comments(
+      postId:postId,
+      postOwnerId:ownerId,
+      postMediaUrl:mediaUrl
+    );
+  }));
 }

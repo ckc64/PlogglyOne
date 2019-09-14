@@ -4,9 +4,16 @@ import 'package:ploggly/pages/home.dart';
 import 'package:ploggly/splashscreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-
-void main() => runApp(MyApp());
+void main() {
+  Firestore.instance.settings(timestampsInSnapshotsEnabled: true).then((_){
+    print("Timestamps enable in snapshots\n");
+  }, onError: (_){
+    print("Error in timestamp snapshot");
+  });
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
