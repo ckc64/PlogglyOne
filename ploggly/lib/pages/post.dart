@@ -231,9 +231,9 @@ final String postId;
 final activityFeedRef = Firestore.instance.collection('feed');
   final userRef = Firestore.instance.collection('users').document(currentUserID);
 
-    //bool isNotPostOwner = currentUserID != ownerId;
+    bool isNotPostOwner = currentUserID != ownerId;
 
-    //if(isNotPostOwner){
+    if(isNotPostOwner){
         userRef.get().then((doc){
             if (doc.exists) {
                   activityFeedRef
@@ -254,7 +254,7 @@ final activityFeedRef = Firestore.instance.collection('feed');
         print("add like No such document!");
     }
         });
-    //}
+    }
  
 
   }
@@ -333,7 +333,7 @@ final activityFeedRef = Firestore.instance.collection('feed');
             Container(
               margin: EdgeInsets.only(left: 20),
               child: Text(
-                  "$username",
+                  "$username ",
                   style: TextStyle(color:Colors.black,fontFamily: 'Montserrat',fontWeight: FontWeight.bold),
               ),
             ),

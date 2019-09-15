@@ -228,6 +228,8 @@ buildProfileButton(){
       text: "Edit Profile",
       function: editProfile
     );
+  }else{
+    return Text('button');
   }
 }
 

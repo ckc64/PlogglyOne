@@ -9,6 +9,7 @@ AppBar header(String title){
           fontFamily: 'Pacifico',
           fontSize: 25.0
         ),
+     //   overflow: TextOverflow.ellipsis,
       ),
       centerTitle: true,
       backgroundColor: Colors.pink,

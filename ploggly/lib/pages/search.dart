@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ploggly/pages/activity_feed.dart';
 import 'package:ploggly/widgets/progress.dart';
 
 
@@ -93,7 +94,7 @@ class _SearchState extends State<Search> {
             child: Column(
               children: <Widget>[
                 GestureDetector(
-                  onTap: ()=> print('tapped'),
+                  onTap: showProfile(context,profileId: doc['userid']),
                   child: ListTile(
                     leading: CircleAvatar(
                       backgroundColor: Colors.grey,

@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:ploggly/pages/home.dart' as prefix0;
 import 'package:ploggly/widgets/header.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -75,7 +76,7 @@ class _CommentsState extends State<Comments> {
 
   addComment(){
      final userRef = Firestore.instance.collection('users').document(loggedInUser.uid);
-      
+       final activityFeedRef = Firestore.instance.collection('feed');
       
         userRef.get().then((doc){
             if (doc.exists) {
@@ -88,14 +89,31 @@ class _CommentsState extends State<Comments> {
                     "avatarUrl":doc.data["profpic"],
                     "userId":loggedInUser.uid
                   });  
-                  commentController.clear();         
+                 
+                  bool isNotPostOwner = postOwnerId != prefix0.loggedInUser.uid;
+                  if(isNotPostOwner){
+                        activityFeedRef
+                    .document(postOwnerId)
+                    .collection('feedItems')
+                    .add({
+                          "type":"comment",
+                          "commentData":commentController.text,
+                          "timestamp":DateTime.now(),
+                          "postId":postId,
+                          "userId":prefix0.loggedInUser.uid,
+                          "username":doc.data['username'],
+                          "userProfileImg":doc.data['profpic'],
+                          "mediaUrl":postMediaUrl,
+                    });
+                  }
+                   commentController.clear(); 
     } else {
         // doc.data() will be undefined in this case
         print("No such document!");
     }
         });
 
-  
+
   }
 
   @override
