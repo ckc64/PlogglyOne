@@ -94,7 +94,7 @@ class _SearchState extends State<Search> {
             child: Column(
               children: <Widget>[
                 GestureDetector(
-                  onTap: showProfile(context,profileId: doc['userid']),
+                  onTap: ()=>showProfile(context,profileId: doc['userid']),
                   child: ListTile(
                     leading: CircleAvatar(
                       backgroundColor: Colors.grey,

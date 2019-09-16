@@ -17,6 +17,9 @@ FirebaseAuth fAuth = FirebaseAuth.instance;
   final userRef = Firestore.instance.collection('users');
   User currentUser;
   DocumentSnapshot doc;
+  final followersRef = Firestore.instance.collection('followers');
+  final followingRef = Firestore.instance.collection('following');
+   final activityFeedRef = Firestore.instance.collection('feed');
 class Homepage extends StatefulWidget {
  
   final String userID;

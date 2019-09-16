@@ -83,13 +83,13 @@ class ActivityFeedItem extends StatelessWidget {
     );
   }
 
-  showPost(context){
+  showPost(BuildContext context){
     Navigator.push(context, 
       MaterialPageRoute(builder: (context) => PostScreen(postId: postId,userId: userId,))
     );
   }
   
-  configureMediaPreview(context){
+  configureMediaPreview(BuildContext context){
     if(type == "like" || type == "comment"){
         mediaPreview = GestureDetector(
           onTap: ()=>showPost(context),
@@ -112,8 +112,8 @@ class ActivityFeedItem extends StatelessWidget {
 
       if(type == "like"){
         activityItemText = " liked your post";
-      }else if(type == " follow"){
-        activityItemText = "is following you";
+      }else if(type == "follow"){
+        activityItemText = " is following you";
       }else if(type == "comment"){
         activityItemText = ' replied: $commentData';
       }else{
@@ -133,7 +133,7 @@ class ActivityFeedItem extends StatelessWidget {
         color: Colors.white54,
         child: ListTile(
           title: GestureDetector(
-            onTap: showProfile(context,profileId: userId),
+            onTap: ()=>showProfile(context,profileId: userId),
             child: RichText(
               overflow: TextOverflow.ellipsis,
               text: TextSpan(
@@ -167,6 +167,6 @@ class ActivityFeedItem extends StatelessWidget {
 }
 
 showProfile(BuildContext context,{String profileId}){
-  //Navigator.push(context,MaterialPageRoute(builder: (context)=>Profile(profileID: profileId,)));
+  Navigator.push(context,MaterialPageRoute(builder: (context)=>Profile(profileID: profileId,)));
  
 }

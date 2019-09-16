@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ploggly/pages/edit_profile.dart';
+import 'package:ploggly/pages/home.dart' as prefix0;
 import 'package:ploggly/pages/post.dart';
 import 'package:ploggly/widgets/header.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,7 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ploggly/widgets/post_tile.dart';
 import 'package:ploggly/widgets/progress.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'upload.dart';
+import 'home.dart';
 
 class Profile extends StatefulWidget {
   final String profileID;
@@ -21,7 +22,7 @@ class Profile extends StatefulWidget {
 
 
 class _ProfileState extends State<Profile> {
-
+bool isFollowing = false;
 
 FirebaseAuth fAuth = FirebaseAuth.instance;
   FirebaseUser loggedInUser;
@@ -29,6 +30,8 @@ FirebaseAuth fAuth = FirebaseAuth.instance;
  final userRef = Firestore.instance.collection('users');
    final postRef = Firestore.instance.collection('posts');
 String currentUserID;
+int followerCount =0;
+int followingCount = 0;
 
 String postOrientation="grid";
 bool isLoading =false;
@@ -46,8 +49,40 @@ void getCurrentUserID(){
     super.initState();
     getCurrentUser();
     //getCurrentUserID();
-   getProfilePost();
+    getProfilePost();
+    getFollowers();
+    getFollowing();
+    checkIfFollowing();
   }
+
+  checkIfFollowing()async{
+      DocumentSnapshot doc = await prefix0.followersRef.document(widget.profileID)
+      .collection('userFollowers')
+      .document(prefix0.loggedInUser.uid)
+      .get();
+      setState(() {
+        isFollowing = doc.exists;
+      });
+  }
+
+  getFollowers() async{
+      QuerySnapshot snapshot = await prefix0.followersRef.document(widget.profileID)
+      .collection('usersFollowing')
+      .getDocuments();
+      setState(() {
+        followerCount = snapshot.documents.length;
+      });
+  }
+
+  getFollowing() async{
+      QuerySnapshot snapshot = await prefix0.followingRef.document(widget.profileID)
+      .collection('usersFollowing')
+      .getDocuments();
+      setState(() {
+        followingCount = snapshot.documents.length;
+      });
+  }
+
 
   getProfilePost() async{
     setState(() {
@@ -105,8 +140,8 @@ buildProfileHeader(){
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
                         buildCountColumn("posts",postCount),
-                        buildCountColumn("followers",0),
-                        buildCountColumn("following",0),
+                        buildCountColumn("followers",followerCount),
+                        buildCountColumn("following",followingCount),
                       ],
                     ),
                     Row(
@@ -203,15 +238,15 @@ Container buildButton({String text,Function function}){
         child: Text(
           text,
           style: TextStyle(
-            color: Colors.white,
+            color: isFollowing ? Colors.black :Colors.white,
             fontFamily: 'Montserrat',
           ),
         ),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: Colors.pink,
+          color: isFollowing ? Colors.white : Colors.pink, 
           border: Border.all(
-            color: Colors.pink,
+            color: isFollowing ? Colors.grey : Colors.pink,
           ),
           borderRadius: BorderRadius.circular(5.0),
         ),
@@ -228,9 +263,92 @@ buildProfileButton(){
       text: "Edit Profile",
       function: editProfile
     );
-  }else{
-    return Text('button');
+  }else if(isFollowing){
+    return buildButton(
+      text: "Unfollow",
+      function: handleUnfollowUser
+    );
+  }else if(!isFollowing){
+     return buildButton(
+      text: "Follow",
+      function: handleFollowUser
+    );
   }
+}
+
+handleUnfollowUser(){
+  setState(() {
+    isFollowing = false; 
+  });
+  followersRef
+    .document(widget.profileID)
+    .collection('usersFollower')
+    .document(prefix0.loggedInUser.uid)
+    .get().then((doc){
+      if(doc.exists){
+        doc.reference.delete();
+      }else{
+        print("$currentUserID followers dont exist "+widget.profileID);
+      }
+    });
+
+    //update following collection
+    followingRef
+    .document(prefix0.loggedInUser.uid)
+    .collection('usersFollowing')
+    .document(widget.profileID)
+    .get().then((doc){
+      if(doc.exists){
+        doc.reference.delete();
+      }else{
+        print("$currentUserID following dont exist "+widget.profileID);
+      }
+    });
+
+}
+
+handleFollowUser(){
+  setState(() {
+    isFollowing = true; 
+  });
+
+  followersRef
+    .document(widget.profileID)
+    .collection('usersFollower')
+    .document(prefix0.loggedInUser.uid)
+    .setData({
+
+    });
+
+    //update following collection
+    followingRef
+    .document(prefix0.loggedInUser.uid)
+    .collection('usersFollowing')
+    .document(widget.profileID)
+    .setData({});
+
+    //add notification
+     final userRef = Firestore.instance.collection('users').document(prefix0.loggedInUser.uid);
+    userRef.get().then((doc){
+            if (doc.exists) {
+                  activityFeedRef
+    .document(widget.profileID)
+    .collection('feedItems')
+    .document(prefix0.loggedInUser.uid)
+    .setData({
+       "type":"follow",
+      "ownerId":widget.profileID,
+      "username":doc.data['username'],
+      "userProfileImg":doc.data['profpic'],
+      "timestamp":DateTime.now(),
+      });     
+    } else {
+        // doc.data() will be undefined in this case
+        print("add like No such document!");
+    }
+        });
+
+  
 }
 
 setPostOrientation(String postOrientation){
