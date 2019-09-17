@@ -83,6 +83,8 @@ class ActivityFeedItem extends StatelessWidget {
     );
   }
 
+
+
   showPost(BuildContext context){
     Navigator.push(context, 
       MaterialPageRoute(builder: (context) => PostScreen(postId: postId,userId: userId,))
@@ -122,7 +124,6 @@ class ActivityFeedItem extends StatelessWidget {
   }
 
 
-  
 
   @override
   Widget build(BuildContext context) {
@@ -167,6 +168,8 @@ class ActivityFeedItem extends StatelessWidget {
 }
 
 showProfile(BuildContext context,{String profileId}){
+   
   Navigator.push(context,MaterialPageRoute(builder: (context)=>Profile(profileID: profileId,)));
+ 
  
 }

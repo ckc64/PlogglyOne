@@ -57,17 +57,18 @@ void getCurrentUserID(){
 
   checkIfFollowing()async{
       DocumentSnapshot doc = await prefix0.followersRef.document(widget.profileID)
-      .collection('userFollowers')
+      .collection('usersFollower')
       .document(prefix0.loggedInUser.uid)
       .get();
       setState(() {
         isFollowing = doc.exists;
+        print("is Following : $isFollowing");
       });
   }
 
   getFollowers() async{
       QuerySnapshot snapshot = await prefix0.followersRef.document(widget.profileID)
-      .collection('usersFollowing')
+      .collection('usersFollower')
       .getDocuments();
       setState(() {
         followerCount = snapshot.documents.length;
@@ -317,7 +318,7 @@ handleFollowUser(){
     .collection('usersFollower')
     .document(prefix0.loggedInUser.uid)
     .setData({
-
+          "userId":widget.profileID
     });
 
     //update following collection
@@ -325,7 +326,9 @@ handleFollowUser(){
     .document(prefix0.loggedInUser.uid)
     .collection('usersFollowing')
     .document(widget.profileID)
-    .setData({});
+    .setData({
+        "userId":widget.profileID
+    });
 
     //add notification
      final userRef = Firestore.instance.collection('users').document(prefix0.loggedInUser.uid);
@@ -341,6 +344,7 @@ handleFollowUser(){
       "username":doc.data['username'],
       "userProfileImg":doc.data['profpic'],
       "timestamp":DateTime.now(),
+      "userId":prefix0.loggedInUser.uid,
       });     
     } else {
         // doc.data() will be undefined in this case

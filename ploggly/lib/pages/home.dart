@@ -158,7 +158,7 @@ Future<bool> _onBackPressed(){
             Icon(Icons.whatshot, size: 25,color: Colors.white),
             Icon(Icons.camera_alt, size: 25,color: Colors.white),
             Icon(Icons.search, size: 35,color: Colors.white),
-            Icon(Icons.favorite, size: 25,color: Colors.white),
+            Icon(Icons.person, size: 25,color: Colors.white),
           ],
           color: Colors.pink,
           
