@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ploggly/pages/comments.dart';
@@ -139,7 +140,7 @@ final String postId;
         if(!snapshot.hasData){
           return circularProgress();
         }
-         
+         bool isPostOwner = loggedInUser.uid==ownerId;
          return ListTile(
             leading: CircleAvatar(
               backgroundImage: CachedNetworkImageProvider(snapshot.data['profpic']),
@@ -156,14 +157,76 @@ final String postId;
               ),
             ),
             subtitle: Text(location),
-            trailing: IconButton(
-              onPressed: ()=>print('deleting posts'),
+            trailing: isPostOwner ? IconButton(
+              onPressed: ()=>handleDeletePost(context),
               icon: Icon(Icons.more_vert),
-            ),
+            ):Text(""),
          );
       }
     );
   }
+  handleDeletePost(BuildContext parentContext){
+      return showDialog(
+        context: parentContext,
+        builder: (context){
+          return SimpleDialog(title: Text("Remove this post?"),
+          children: <Widget>[
+            SimpleDialogOption(
+              onPressed: (){
+                Navigator.pop(context);
+                deletePost();
+              },
+              child: Text("Delete",
+              style:TextStyle(color: Colors.red),
+              ),
+            ),
+              SimpleDialogOption(
+                onPressed: ()=>Navigator.pop(context),
+              child: Text("Cancel",
+              ),
+            )
+          ],
+          );
+        }
+      );
+  }
+
+   deletePost() async{
+       final postRef = Firestore.instance.collection('posts');
+       postRef
+        .document(ownerId)
+        .collection('userPosts')
+        .document(postId)
+        .get().then((doc){
+          if(doc.exists){
+            doc.reference.delete();
+          }
+        });
+        final StorageReference storageRef = FirebaseStorage.instance.ref();
+        storageRef.child("profile_$postId.jpg").delete();
+        QuerySnapshot activityFeedSnapshot = await activityFeedRef
+        .document(ownerId)
+        .collection("feedItems")
+        .where("postId",isEqualTo: postId)
+        .getDocuments();
+        activityFeedSnapshot.documents.forEach((doc){
+          if(doc.exists){
+            doc.reference.delete();
+          }
+        });
+
+       final commentsRef = Firestore.instance.collection("comments");
+       QuerySnapshot commentSnapshot =  await commentsRef
+       .document(postId)
+       .collection("comments")
+       .getDocuments();
+
+       commentSnapshot.documents.forEach((doc){
+          if(doc.exists){
+            doc.reference.delete();
+          }
+       });
+   }
 
   handleLikePost(){
   
