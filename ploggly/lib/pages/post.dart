@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ploggly/pages/activity_feed.dart';
 import 'package:ploggly/pages/comments.dart';
 import 'package:ploggly/pages/home.dart';
 import 'package:ploggly/pages/user.dart';
@@ -147,7 +148,7 @@ final String postId;
               backgroundColor: Colors.grey
             ),
             title: GestureDetector(
-              onTap: ()=>print('show profile'),
+              onTap: ()=>showProfile(context,profileId: ownerId),
               child: Text(
                 snapshot.data['username'],
                 style: TextStyle(
@@ -203,7 +204,7 @@ final String postId;
           }
         });
         final StorageReference storageRef = FirebaseStorage.instance.ref();
-        storageRef.child("profile_$postId.jpg").delete();
+        storageRef.child("post_$postId.jpg").delete();
         QuerySnapshot activityFeedSnapshot = await activityFeedRef
         .document(ownerId)
         .collection("feedItems")
