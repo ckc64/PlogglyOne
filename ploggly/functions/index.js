@@ -82,7 +82,6 @@ exports.onDeleteFollower = functions.firestore
             .firestore()
             .collection('followers')
             .doc(userId)
-            .collection('userPosts')
             .collection('userFollower');
 
             const querySnapshot = await userFollowersRef.get();
@@ -116,7 +115,7 @@ exports.onUpdatePost = functions.firestore
         .collection('followers')
         .doc(userId)
         .collection('userPosts')
-        .collection('userFollower');
+    
 
         const querySnapshot = await userFollowersRef.get();
             //update each post to each follwers timeline
@@ -151,7 +150,7 @@ exports.onUpdatePost = functions.firestore
         .collection('followers')
         .doc(userId)
         .collection('userPosts')
-        .collection('userFollower');
+     
 
         const querySnapshot = await userFollowersRef.get();
             //update each post to each follwers timeline
