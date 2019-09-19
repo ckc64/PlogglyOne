@@ -20,6 +20,7 @@ FirebaseAuth fAuth = FirebaseAuth.instance;
   final followersRef = Firestore.instance.collection('followers');
   final followingRef = Firestore.instance.collection('following');
    final activityFeedRef = Firestore.instance.collection('feed');
+   final timelineRef = Firestore.instance.collection('timeline');
 class Homepage extends StatefulWidget {
  
   final String userID;
@@ -138,7 +139,7 @@ Future<bool> _onBackPressed(){
         onWillPop: _onBackPressed,
               child: PageView(
           children: <Widget>[
-            Timeline(),
+            Timeline(currentUser:widget.userID),
             ActivityFeed(),
             Upload(currentUser: widget.userID),
             Search(),
