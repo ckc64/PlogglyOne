@@ -234,7 +234,7 @@ Container buildButton({String text,Function function}){
     child: FlatButton(
       onPressed: function,
       child: Container(
-        width: 250.0,
+        width: 220.0,
         height: 27.0,
         child: Text(
           text,
