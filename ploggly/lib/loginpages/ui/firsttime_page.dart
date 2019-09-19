@@ -15,6 +15,7 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'login_page.dart';
 
 class FirsTimePage extends StatefulWidget {
+  
   @override
  _FirsTimePageState createState() => _FirsTimePageState();
 }
@@ -90,67 +91,71 @@ int bDateYear=0;
  String _date = "Birthdate";
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body:  ModalProgressHUD(
-                inAsyncCall:showSpinner,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      
-              children: <Widget>[
-                 Padding(
-                          padding: EdgeInsets.only(top: 100.0),
-                          child: Text(
-                            'set up account ',
-                            style: TextStyle(
-                                color: Colors.pink,
-                                fontFamily: 'Pacifico',
-                                fontSize: 35.0),
-                          )),
-                Stepper(
-                      steps:  _signUpStep(),
-                      currentStep: this._currentStep,
-                      onStepTapped: (step){
-                        setState(() {
-                          this._currentStep = step; 
-                        });
-                      },
-                      onStepContinue: () {
+    return WillPopScope(
+      onWillPop: () {
+         Navigator.pushReplacement(context,
+                                    MaterialPageRoute (builder: (context)=>LoginPage())
+                                  );
+      },
+          child: Scaffold(
+          body:  ModalProgressHUD(
+                  inAsyncCall:showSpinner,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        
+                children: <Widget>[
+                   Padding(
+                            padding: EdgeInsets.only(top: 100.0),
+                            child: Text(
+                              'set up account ',
+                              style: TextStyle(
+                                  color: Colors.pink,
+                                  fontFamily: 'Pacifico',
+                                  fontSize: 35.0),
+                            )),
+                  Stepper(
+                        steps:  _signUpStep(),
+                        currentStep: this._currentStep,
+                        onStepTapped: (step){
                           setState(() {
-                            if(this._currentStep < this._signUpStep().length-1){
-                              this._currentStep = this._currentStep+1;
-                            }else{
-                                setState(() {
-                                 showSpinner=true;
-                                }); 
-
-                                createUser();
-
-                               
-                                    
-                                
-                            } 
+                            this._currentStep = step; 
                           });
-                      },
-                      onStepCancel: (){
-                        setState(() {
-                         if(this._currentStep>0){
-                            this._currentStep = this._currentStep-1;
-                         }else{
-                           this._currentStep = 0;
-                         } 
-                        });
-                      },
-                      
-      
-                  ),
+                        },
+                        onStepContinue: () {
+                            setState(() {
+                              if(this._currentStep < this._signUpStep().length-1){
+                                this._currentStep = this._currentStep+1;
+                              }else{
+                                  setState(() {
+                                   showSpinner=true;
+                                  }); 
+
+                                  createUser();    
+                                  
+                              } 
+                            });
+                        },
+                        onStepCancel: (){
+                          setState(() {
+                           if(this._currentStep>0){
+                              this._currentStep = this._currentStep-1;
+                           }else{
+                             this._currentStep = 0;
+                           } 
+                          });
+                        },
+                        
+        
+                    ),
 
 
-              ],
+                ],
+              ),
             ),
           ),
-        ),
+          
         
-      
+      ),
     );
   }
 
