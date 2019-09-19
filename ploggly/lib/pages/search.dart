@@ -48,7 +48,7 @@ class _SearchState extends State<Search> {
             ),
             suffixIcon: IconButton(
               icon: Icon(Icons.clear),
-              onPressed: ()=>print('cleared'),
+              onPressed: ()=>searchController.clear(),
             )
           ),
           onFieldSubmitted: handleSearch,
