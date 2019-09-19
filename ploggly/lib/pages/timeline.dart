@@ -31,13 +31,14 @@ List<String> followingList;
 
   getFollowing() async{
    QuerySnapshot snapshot =  await followingRef
-      .document(loggedInUser.uid)
+      .document(widget.currentUser)
       .collection('usersFollowing')
       .getDocuments();
 
       setState(() {
         followingList = snapshot.documents.map((doc)=>doc.documentID).toList();
         print("List : $followingList");
+      
       });
   }
   getTimeline()async{
@@ -116,6 +117,7 @@ List<String> followingList;
         });
         //  print("Current User "+ loggedInUser.uid+ " doc id "+ doc['userid']+"Follwing list ");
           print("search $searchResults");
+          print("userRef"+snapshot.data);
           return ListView(
             children: searchResults
         );
