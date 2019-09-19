@@ -82,7 +82,7 @@ exports.onDeleteFollower = functions.firestore
             .firestore()
             .collection('followers')
             .doc(userId)
-            .collection('userFollower');
+            .collection('usersFollower');
 
             const querySnapshot = await userFollowersRef.get();
             //add new post to each follwers timeline
