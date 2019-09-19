@@ -357,9 +357,9 @@ class _LoginPageState extends State<LoginPage>
                       onPressed: () async{
                           String email = loginEmailController.text;
                           String password = loginPasswordController.text;
-                          
-                         
 
+                       
+                          
                         if(email.isEmpty || password.isEmpty){
                             showDialogAlert('Email or password is empty');
                         }else{
@@ -373,19 +373,46 @@ class _LoginPageState extends State<LoginPage>
                            
                               FirebaseUser willLoggedInUser = await fAuth.currentUser();
                               String userid =  willLoggedInUser.uid;
+                              
+                            
                               SharedPreferences prefs = await SharedPreferences.getInstance();
                               if(user != null){                   
                                   prefs.setString("email", email);
                                   prefs.setString("uid", userid);
                                   prefs.setString("password", password);
+                                  
+                                    await userRef.document(userid)
+                              .get().then((doc){
+                                 
+                                     if(doc.exists){
+                                        if(doc["age"] == "" || doc["bio"] == "" || doc["birthdate"]
+                                        == doc["gender"] || doc["name"] == "" || doc["profpic"] == ""
+                                        || doc["userid"] == ""|| doc["username"] == ""){
+                                              Navigator.pushReplacement(context, 
+                                            MaterialPageRoute (builder: (context) => FirsTimePage()));
+                                          setState(() {
+                                            showSpinner=false;
+                                          });
+                                        }else{
+                                            Navigator.pushReplacement(context, 
+                                            MaterialPageRoute (builder: (context) => Homepage(userID:userid)));
+                                          setState(() {
+                                            showSpinner=false;
+                                          });
+                                        }
+
+                                       
+
+                                     }else{
+                                       print("No document $userid");
+                                     }
+                                  
+                              });
    
-                                   Navigator.pushReplacement(context, 
-                                      MaterialPageRoute (builder: (context) => Homepage(userID:userid))
-                                    );
-                                 setState(() {
-           showSpinner=false;
-          });
+                                  
                               }
+
+                              
                               
                           }on PlatformException{
                              showDialogAlert('Email or Password is incorrect');
@@ -604,7 +631,7 @@ class _LoginPageState extends State<LoginPage>
                                 FontAwesomeIcons.lock,
                                 color: Colors.pink,
                               ),
-                              hintText: "Confirmation",
+                              hintText: "Confirm Password",
                               hintStyle: TextStyle(
                                   fontFamily: "Montserrat", fontSize: 16.0),
                               suffixIcon: GestureDetector(
@@ -680,6 +707,18 @@ class _LoginPageState extends State<LoginPage>
                               email: email, password: confirmpass);
                               FirebaseUser firebaseUser = await fAuth.currentUser();
                             String id = firebaseUser.uid;
+                            userRef.document(id).setData({
+                                    
+                                      'age':"",
+                                      'bio': "",
+                                      'birtdate': "",
+                                      'gender': "",
+                                      'name':"",
+                                      'profpic':"",
+                                      'userid':"",
+                                      'username':""
+                                   
+                            });
                               
                               if(newUser != null){
                                  
