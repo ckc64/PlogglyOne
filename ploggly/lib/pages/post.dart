@@ -154,6 +154,7 @@ final String postId;
                 style: TextStyle(
                   color:Colors.black,
                   fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.bold
                 ),
               ),
             ),
