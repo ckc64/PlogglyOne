@@ -156,7 +156,7 @@ Future<bool> _onBackPressed(){
           height: 50.0,
           items: <Widget>[
             Icon(Icons.home, size: 25,color: Colors.white,),
-            Icon(Icons.whatshot, size: 25,color: Colors.white),
+            Icon(Icons.notifications, size: 25,color: Colors.white),
             Icon(Icons.camera_alt, size: 25,color: Colors.white),
             Icon(Icons.search, size: 35,color: Colors.white),
             Icon(Icons.person, size: 25,color: Colors.white),
