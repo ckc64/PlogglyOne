@@ -221,7 +221,7 @@ Container buildSplashScreen(){
   }
 
   Future<String>uploadVideo(videoFile) async{
-      StorageUploadTask uploadTask = storageRef.child("video_$profileID").putFile(file);
+      StorageUploadTask uploadTask = storageRef.child("video_$profileID.mp4").putFile(file);
       StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
       String downloadUrl = await storageTaskSnapshot.ref.getDownloadURL();
       return downloadUrl;
@@ -260,6 +260,7 @@ Container buildSplashScreen(){
                     aspectRatio: 16/9,
                     autoPlay: false,
                     looping: true
+
                   ),
                 ) : Center(
                   child: AspectRatio(
