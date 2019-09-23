@@ -1,6 +1,7 @@
 import 'dart:io';
 //post is always loading need to fix
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,6 +13,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:uuid/uuid.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:video_player/video_player.dart';
 
 class Upload extends StatefulWidget {
 
@@ -24,7 +26,8 @@ class Upload extends StatefulWidget {
 }
 
 class _UploadState extends State<Upload> {
-
+  VideoPlayerController _controller;
+  
   File file;
   final userRef = Firestore.instance.collection('users');
   final postRef = Firestore.instance.collection('posts');
@@ -35,9 +38,12 @@ class _UploadState extends State<Upload> {
   //controller
   TextEditingController locationController = new TextEditingController();
   TextEditingController captionController = new TextEditingController();
-
+  File videoFile;
+  bool isVideo=false;
   //unique for post
   String profileID = Uuid().v4();
+  Future<void>_initalizedVideoPlayerFuture;
+
 
   handleTakePhoto() async{
     Navigator.pop(context);
@@ -60,6 +66,22 @@ class _UploadState extends State<Upload> {
     });
   }
 
+  handleRecordVideo() async{
+    File file = await ImagePicker.pickVideo(
+      source: ImageSource.camera,
+    );
+
+    if(file != null){
+      setState(() {
+       this.file=file; 
+       isVideo = true;
+       _controller = VideoPlayerController.file(file);
+       _initalizedVideoPlayerFuture = _controller.initialize();
+      });
+    }
+    print(isVideo);
+  }
+
   selectImage(parentContext){
        return showDialog(
          context: parentContext,
@@ -73,6 +95,9 @@ class _UploadState extends State<Upload> {
                SimpleDialogOption(child: Text("Image From Gallery"),
                 onPressed: handleChooseFromGallery,
                ),
+                 SimpleDialogOption(child: Text("Take A Video"),
+                onPressed: handleRecordVideo,
+                 ),
                SimpleDialogOption(child: Text("Cancel"),onPressed: ()=>Navigator.pop(context),),
 
              ],
@@ -80,6 +105,7 @@ class _UploadState extends State<Upload> {
          }
        );
   }
+  
 Container buildSplashScreen(){
           return Container(
             child: Column(
@@ -114,8 +140,8 @@ Container buildSplashScreen(){
     setState(() {
       isUploading = true;
     });
-    await compressImage();
-    String mediaUrl = await uploadImage(file);
+    isVideo ? "" : await compressImage() ;
+    String mediaUrl = isVideo ?  await uploadVideo(file): await uploadImage(file);
     createPostInFireStore(
       description: captionController.text,
       location: locationController.text,
@@ -125,6 +151,7 @@ Container buildSplashScreen(){
    
      locationController.clear();
      captionController.clear() ;
+     _controller.dispose();
      setState(() {
       file=null;
       isUploading = false;
@@ -187,11 +214,20 @@ Container buildSplashScreen(){
   }
 
   Future<String>uploadImage(imageFile) async{
-    StorageUploadTask uploadTask = storageRef.child("profile_$profileID.jpg").putFile(imageFile);
+    StorageUploadTask uploadTask = storageRef.child("post_$profileID.jpg").putFile(imageFile);
     StorageTaskSnapshot storageSnap = await uploadTask.onComplete;
     String downloadUrl = await storageSnap.ref.getDownloadURL();
     return downloadUrl;
   }
+
+  Future<String>uploadVideo(videoFile) async{
+      StorageUploadTask uploadTask = storageRef.child("video_$profileID").putFile(file);
+      StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
+      String downloadUrl = await storageTaskSnapshot.ref.getDownloadURL();
+      return downloadUrl;
+  }
+
+
 
   Scaffold buildUploadForm(){
       return Scaffold(
@@ -218,10 +254,17 @@ Container buildSplashScreen(){
               Container(
                 height: 220.0,
                 width: MediaQuery.of(context).size.width*0.8,
-                child: Center(
+                child: isVideo ? Chewie(
+                  controller: ChewieController(
+                    videoPlayerController: _controller,
+                    aspectRatio: 16/9,
+                    autoPlay: false,
+                    looping: true
+                  ),
+                ) : Center(
                   child: AspectRatio(
                     aspectRatio: 16/9,
-                    child: Container(
+                    child:Container(
                       decoration: BoxDecoration(
                         image: DecorationImage(
                           fit:BoxFit.cover,
@@ -272,7 +315,7 @@ Container buildSplashScreen(){
                 child: TextField(
                   controller: locationController,
                   decoration: InputDecoration(
-                    hintText: "Where was this photo taken?",
+                    hintText: "Location",
                     border: InputBorder.none,
                   ),
                 ),
