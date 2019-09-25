@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chewie/chewie.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,6 +14,7 @@ import 'package:ploggly/widgets/progress.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:animator/animator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:video_player/video_player.dart';
 
 class Post extends StatefulWidget {
   
@@ -22,8 +24,10 @@ class Post extends StatefulWidget {
   final String location;
   final String description;
   final String mediaUrl;
+  final String videoUrl;
   final dynamic likes;
   User currentUser;
+  
 
 //fix current user id
 
@@ -35,6 +39,7 @@ class Post extends StatefulWidget {
   this.description,
   this.mediaUrl,
   this.likes, 
+  this.videoUrl, 
   });
 
   factory Post.fromDocument(DocumentSnapshot doc){
@@ -45,6 +50,7 @@ class Post extends StatefulWidget {
       location: doc['location'],
       description: doc['description'],
       mediaUrl: doc['mediaURL'],
+      videoUrl: doc['videoURL'],
       likes: doc['likes'],
     );
   }
@@ -73,6 +79,7 @@ class Post extends StatefulWidget {
     location: this.location,
     description: this.description,
     mediaUrl: this.mediaUrl,
+    videoUrl:this.videoUrl,
     likes: this.likes,
     likeCount: getLikeCount(this.likes),
   );
@@ -83,6 +90,8 @@ class Post extends StatefulWidget {
 
    String email="",uid="",password="";
 class _PostState extends State<Post> {
+  VideoPlayerController _controller;
+ Future<void>_initalizedVideoPlayerFuture;
 
  
   //bool isLoggedIn=false;
@@ -105,8 +114,11 @@ class _PostState extends State<Post> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    checkIfVideo();
     _function();
   }
+
+
   
 final String currentUserID=loggedInUser.uid;
 final String postId;
@@ -115,6 +127,7 @@ final String postId;
   final String location;
   final String description;
   final String mediaUrl;
+  final String videoUrl;
   int likeCount;
   Map likes;
   bool isLiked;
@@ -128,6 +141,7 @@ final String postId;
   this.description,
   this.mediaUrl,
   this.likes,
+  this.videoUrl,
   this.likeCount,
   });
 
@@ -312,6 +326,7 @@ final activityFeedRef = Firestore.instance.collection('feed');
         "userProfileImg":doc.data['profpic'],
         "postId":postId,
         "mediaUrl":mediaUrl,
+        "videoURL":videoUrl,
         "timestamp":DateTime.now()
       });     
     } else {
@@ -320,16 +335,52 @@ final activityFeedRef = Firestore.instance.collection('feed');
     }
         });
     }
- 
 
   }
+bool isVideo = false;
+ bool checkIfVideo(){
+    final postRef = Firestore.instance.collection('posts');
+    postRef
+      .document(ownerId)
+      .collection('userPosts')
+      .document(postId)
+      .get().then((doc){
+          if(doc.data['videoURL'] != "" ){
+              setState(() {
+                isVideo = true; 
+              });
+          }else if(doc.data['mediaURL'] != "" && doc.data['videoURL'] == ""){
+            setState(() {
+              isVideo = false; 
+            });
+          }
+          print(isVideo);
+        return isVideo;
+        
+      });
+
+     
+ }
+  
+   
 
   buildPostImage(){
+      _controller = VideoPlayerController.network(videoUrl);
     return GestureDetector(
       onDoubleTap: handleLikePost,
       child: Stack(
         alignment: Alignment.center,
         children: <Widget>[
+          
+          Chewie(
+                  controller: ChewieController(
+                    videoPlayerController: _controller,
+                    aspectRatio: 16/9,
+                    autoPlay: false,
+                    looping: true
+                    
+                  ) 
+                ), 
           cachedNetworkImage(mediaUrl),
           
          showHeart ? Animator(

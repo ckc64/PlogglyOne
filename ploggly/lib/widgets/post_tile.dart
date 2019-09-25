@@ -8,10 +8,17 @@ class PostTile extends StatelessWidget {
 
   PostTile(this.post);
   showPost(context){
-    Navigator.pushReplacement(context, 
+    Navigator.push(context, 
       MaterialPageRoute(builder: (context) => PostScreen(postId: post.postId,userId: post.ownerId,))
     );
   }
+
+  bool checkIfVideo(){
+    if(post.mediaUrl == "" && post.videoUrl != "" ){
+        return true;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

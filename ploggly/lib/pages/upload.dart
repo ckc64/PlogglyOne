@@ -141,17 +141,19 @@ Container buildSplashScreen(){
       isUploading = true;
     });
     isVideo ? "" : await compressImage() ;
-    String mediaUrl = isVideo ?  await uploadVideo(file): await uploadImage(file);
+    String videoUrl = await uploadVideo(file);
+    String mediaUrl = await uploadImage(file);
     createPostInFireStore(
       description: captionController.text,
       location: locationController.text,
-      mediaUrl: mediaUrl
+      mediaUrl: isVideo ? "" : mediaUrl,
+      videoUrl: isVideo ? videoUrl : "",
     );
 
    
      locationController.clear();
      captionController.clear() ;
-     _controller.dispose();
+ 
      setState(() {
       file=null;
       isUploading = false;
@@ -160,7 +162,7 @@ Container buildSplashScreen(){
    
   }
 
-  createPostInFireStore({String mediaUrl,String location, String description}){
+  createPostInFireStore({String mediaUrl,String videoUrl,String location, String description}){
   
      final docRef = Firestore.instance
         .collection('users')
@@ -179,6 +181,7 @@ Container buildSplashScreen(){
             "ownerID":widget.currentUser,
             "username":doc.data["username"],
             "mediaURL":mediaUrl,
+            "videoURL":videoUrl,
             "description":description,
             "location": location,
             "timestamp":DateTime.now(),
@@ -221,7 +224,7 @@ Container buildSplashScreen(){
   }
 
   Future<String>uploadVideo(videoFile) async{
-      StorageUploadTask uploadTask = storageRef.child("video_$profileID.mp4").putFile(file);
+      StorageUploadTask uploadTask = storageRef.child("video_$profileID.mp4").putFile(videoFile);
       StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
       String downloadUrl = await storageTaskSnapshot.ref.getDownloadURL();
       return downloadUrl;

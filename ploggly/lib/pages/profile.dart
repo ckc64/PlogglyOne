@@ -224,7 +224,7 @@ Column buildCountColumn(String label, int count){
 }
 
 editProfile(){
-    Navigator.pushReplacement(context,
+    Navigator.push(context,
       MaterialPageRoute(builder: (context) => EditProfile(currentUserID: widget.profileID,))
     );
 }
