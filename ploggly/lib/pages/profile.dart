@@ -228,8 +228,10 @@ editProfile(){
       MaterialPageRoute(builder: (context) => EditProfile(currentUserID: widget.profileID,))
     );
 }
-Container buildButton({String text,Function function}){
-  return Container(
+Stack buildButton({String text,Function function,String text2,Function function2}){
+  return Stack(
+    children: <Widget>[
+        Container(
     padding: EdgeInsets.only(top:2.0),
     child: FlatButton(
       onPressed: function,
@@ -253,7 +255,37 @@ Container buildButton({String text,Function function}){
         ),
       ),
     ),
+  ),
+ 
+  Container(
+    padding: EdgeInsets.only(top:35.0),
+    child: FlatButton(
+      onPressed: function2,
+      child: Container(
+        width: 220.0,
+        height: 27.0,
+        child: Text(
+          text2,
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: 'Montserrat',
+          ),
+        ),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: Colors.pink, 
+          border: Border.all(
+            color: Colors.pink,
+          ),
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+      ),
+    ),
+  )
+    ],
   );
+  
+  
 }
 
 buildProfileButton(){
@@ -262,17 +294,24 @@ buildProfileButton(){
   if(isProfileOwner){
     return buildButton(
       text: "Edit Profile",
-      function: editProfile
+      function: editProfile,
+      text2: "View Messages",
+      function2: ()=>print("view messages")
     );
   }else if(isFollowing){
     return buildButton(
       text: "Unfollow",
-      function: handleUnfollowUser
+      function: handleUnfollowUser,
+       text2: "Send a Message",
+      function2: ()=>print("Send Message")
     );
+    
   }else if(!isFollowing){
      return buildButton(
       text: "Follow",
-      function: handleFollowUser
+      function: handleFollowUser,
+      text2: "Send a Message",
+      function2: ()=>print("Send Message")
     );
   }
 }
