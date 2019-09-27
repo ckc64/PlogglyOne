@@ -224,8 +224,13 @@ Container buildSplashScreen(){
   }
 
   Future<String>uploadVideo(videoFile) async{
-      StorageUploadTask uploadTask = storageRef.child("video_$profileID.mp4").putFile(videoFile);
+      StorageUploadTask uploadTask = storageRef.child("video_$profileID").putFile(videoFile);
       StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
+
+      setState(() {
+       isVideo = false; 
+      });
+
       String downloadUrl = await storageTaskSnapshot.ref.getDownloadURL();
       return downloadUrl;
   }
