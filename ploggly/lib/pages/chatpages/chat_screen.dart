@@ -23,13 +23,19 @@ class _ChatScreenState extends State<ChatScreen> {
     // TODO: implement initState
     super.initState();
     print(widget.profileID);
+    messageStream();
   }
 
  
-
-  getMessages(){
-    messageRef.getDocuments();
+  messageStream() async{
+    await for(var snapshot in messageRef.snapshots()){
+      for(var message in snapshot.documents){
+        print(message.data);
+      }
+    }
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -65,14 +71,24 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                   ),
                   FlatButton(
-                    onPressed: (){
-                       messageRef
+                    onPressed: () async{
+                       await messageRef.document(loggedInUser.uid)
+                       .collection('conversation')
+                       .document('receivers')
+                       .collection(widget.profileID)
+                       .document()
+                       .setData({
+                          "sender":loggedInUser.email,
+                          "message":messageController.text,
+                          "receiver":widget.profileID
+                       });
+                       messageController.clear();
 
-                            .add({
-                              "sender":loggedInUser.email,
-                              "message":messageController.text,
-                              "receiver":widget.profileID
-                            });
+                            // .add({
+                            //   "sender":loggedInUser.email,
+                            //   "message":messageController.text,
+                            //   "receiver":widget.profileID
+                            // });
                     },
                     child: Text(
                       'Send',
