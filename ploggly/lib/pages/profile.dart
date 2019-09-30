@@ -9,6 +9,7 @@ import 'package:ploggly/widgets/post_tile.dart';
 import 'package:ploggly/widgets/progress.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'home.dart';
+import 'chatpages/chat_screen.dart';
 
 class Profile extends StatefulWidget {
   final String profileID;
@@ -295,7 +296,7 @@ buildProfileButton(){
     return buildButton(
       text: "Edit Profile",
       function: editProfile,
-      text2: "View Messages",
+      text2: "Messages",
       function2: ()=>print("view messages")
     );
   }else if(isFollowing){
@@ -303,7 +304,9 @@ buildProfileButton(){
       text: "Unfollow",
       function: handleUnfollowUser,
        text2: "Send a Message",
-      function2: ()=>print("Send Message")
+      function2: ()=>Navigator.push(context, 
+        MaterialPageRoute(builder: (context)=>ChatScreen(profileID: widget.profileID,))
+      )
     );
     
   }else if(!isFollowing){
@@ -311,7 +314,9 @@ buildProfileButton(){
       text: "Follow",
       function: handleFollowUser,
       text2: "Send a Message",
-      function2: ()=>print("Send Message")
+      function2: ()=> Navigator.push(context, 
+        MaterialPageRoute(builder: (context)=>ChatScreen(profileID: widget.profileID,))
+      )
     );
   }
 }
