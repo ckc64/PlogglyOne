@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ploggly/pages/chatpages/chat_feed.dart';
 import 'package:ploggly/pages/edit_profile.dart';
 import 'package:ploggly/pages/home.dart' as prefix0;
 import 'package:ploggly/pages/post.dart';
@@ -237,7 +238,7 @@ Stack buildButton({String text,Function function,String text2,Function function2
     child: FlatButton(
       onPressed: function,
       child: Container(
-        width: 220.0,
+        width: 200.0,
         height: 27.0,
         child: Text(
           text,
@@ -263,7 +264,7 @@ Stack buildButton({String text,Function function,String text2,Function function2
     child: FlatButton(
       onPressed: function2,
       child: Container(
-        width: 220.0,
+        width: 200.0,
         height: 27.0,
         child: Text(
           text2,
@@ -297,7 +298,10 @@ buildProfileButton(){
       text: "Edit Profile",
       function: editProfile,
       text2: "Messages",
-      function2: ()=>print("view messages")
+      function2: ()=>
+      Navigator.push(context, 
+        MaterialPageRoute(builder: (context)=>ChatFeed())
+      )
     );
   }else if(isFollowing){
     return buildButton(

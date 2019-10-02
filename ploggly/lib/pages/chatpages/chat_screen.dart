@@ -1,12 +1,17 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ploggly/pages/home.dart';
 import 'package:ploggly/widgets/progress.dart';
+import '../activity_feed.dart';
+import '../profile.dart';
 import 'constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:timeago/timeago.dart' as timeago;
 FirebaseAuth fAuth = FirebaseAuth.instance;
   final messageRef = Firestore.instance.collection('messages');
+  final chatfeedRef = Firestore.instance.collection('chatfeed');
+   
 class ChatScreen extends StatefulWidget {
   final profileID;
 
@@ -16,6 +21,9 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+
+
+
     //FirebaseUser loggedInUser;
     TextEditingController messageController = TextEditingController();
     String messageTxt;
@@ -25,17 +33,9 @@ class _ChatScreenState extends State<ChatScreen> {
     // TODO: implement initState
     super.initState();
     print(widget.profileID);
-    messageStream();
+  
   }
 
- 
-  messageStream() async{
-    await for(var snapshot in messageRef.snapshots()){
-      for(var message in snapshot.documents){
-        print(message.data['timestamp']);
-      }    
-    }
-  }
 
 
 
@@ -45,13 +45,38 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         leading: null,
         actions: <Widget>[
+          
           IconButton(
               icon: Icon(Icons.close),
               onPressed: () {
                 Navigator.pop(context);
               }),
         ],
-        title: Text('Messages'),
+        title: StreamBuilder(
+            stream: userRef.document(widget.profileID).snapshots(),
+            builder: (context,snapshots){
+              if(!snapshots.hasData){
+                return circularProgress();
+              }
+                  return ListTile(
+                  leading: CircleAvatar(
+              backgroundImage: CachedNetworkImageProvider(snapshots.data['profpic']),
+              backgroundColor: Colors.grey
+            ),
+            title:GestureDetector(
+              onTap: ()=>Navigator.pushReplacement(context,MaterialPageRoute(builder: (context)=>Profile(profileID: widget.profileID,))),
+              child: Text(
+                snapshots.data['username'],
+                style: TextStyle(
+                  color:Colors.white,
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.bold
+                ),
+              ),
+            ),
+                );
+            },
+          ),
         backgroundColor: Colors.pink,
       ),
       body: SafeArea(
@@ -80,8 +105,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   FlatButton(
                     onPressed: () async{
                         messageController.clear();
+                      await userRef.document(widget.profileID).get().then((doc){
+                          if(doc.exists){
 
-                       await messageRef.document(loggedInUser.uid)
+                             messageRef.document(loggedInUser.uid)
                        .collection('conversation')
                        .document('receivers')
                        .collection(widget.profileID)
@@ -90,20 +117,62 @@ class _ChatScreenState extends State<ChatScreen> {
                           "sender":loggedInUser.email,
                           "message":messageTxt,
                           "receiver":widget.profileID,
-                          "timestamp":DateTime.now()
+                          "timestamp":DateTime.now(),
+                          "profpic":doc.data['profpic'],
+                          "username":doc.data['username']
                        });
 
-                        await messageRef.document(widget.profileID)
-                       .collection('conversation')
-                       .document('receivers')
-                       .collection(loggedInUser.uid)
-                       .document()
-                       .setData({
+                      
+                         messageRef.document(widget.profileID)
+                        .collection('conversation')
+                        .document('receivers')
+                        .collection(loggedInUser.uid)
+                        .document()
+                        .setData({
                           "sender":loggedInUser.email,
                           "message":messageTxt,
                           "receiver":widget.profileID,
-                          "timestamp":DateTime.now()
+                          "timestamp":DateTime.now(),
+                           "profpic":doc.data['profpic'],
+                          "username":doc.data['username']
                        });
+
+                       chatfeedRef
+                       .document(loggedInUser.uid)
+                       .collection('chatfeeditem')
+                       .document(widget.profileID)
+                       .setData({
+                         "sender":loggedInUser.email,
+                          "profpic":doc.data['profpic'],
+                          "username":doc.data['username'],
+                          "message":messageTxt,
+                          "timestamp":DateTime.now(),
+                          "receiverID":widget.profileID,
+                          "sender":loggedInUser.uid
+                       });
+
+                         userRef.document(loggedInUser.uid).get().then((doc1){
+                              if(doc1.exists){
+                                       chatfeedRef
+                          .document(widget.profileID)
+                          .collection('chatfeeditem')
+                          .document(loggedInUser.uid)
+                          .setData({
+                         "sender":loggedInUser.email,
+                          "profpic":doc1.data['profpic'],
+                          "username":doc1.data['username'],
+                          "message":messageTxt,
+                          "timestamp":DateTime.now(),
+                          "receiverID":widget.profileID,
+                             "sender":loggedInUser.uid
+                       });
+                              }
+                          });
+                  
+
+                          }
+                      });
+                       
                          
                     },
                     child: Text(
