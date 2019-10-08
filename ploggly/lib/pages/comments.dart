@@ -13,16 +13,18 @@ class Comments extends StatefulWidget {
   final String postId;
   final String postOwnerId;
   final String postMediaUrl;
+  final String postVideoUrl;
 
   Comments({
-    this.postId,this.postOwnerId,this.postMediaUrl
+    this.postId,this.postOwnerId,this.postMediaUrl, this.postVideoUrl
   });
 
   @override
   _CommentsState createState() => _CommentsState(
     postId:this.postId,
     postOwnerId:this.postOwnerId,
-    postMediaUrl:this.postMediaUrl
+    postMediaUrl:this.postMediaUrl,
+    postVideoUrl:this.postVideoUrl
   );
 }
 
@@ -35,9 +37,10 @@ class _CommentsState extends State<Comments> {
    final String postId;
   final String postOwnerId;
   final String postMediaUrl;
+  final String postVideoUrl;
 
   _CommentsState({
-    this.postId,this.postOwnerId,this.postMediaUrl
+    this.postId,this.postOwnerId,this.postMediaUrl,this.postVideoUrl
   });
 
   @override
@@ -104,6 +107,7 @@ class _CommentsState extends State<Comments> {
                           "username":doc.data['username'],
                           "userProfileImg":doc.data['profpic'],
                           "mediaUrl":postMediaUrl,
+                          "videoUrl":postVideoUrl
                     });
                   }
                    commentController.clear(); 

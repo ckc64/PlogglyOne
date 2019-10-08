@@ -412,17 +412,6 @@ setPostOrientation(String postOrientation){
 buildProfilePost(){
   if(isLoading){
     return circularProgress();
-  // }else if(posts.isEmpty){
-  //   Center(
-  //     child: Text("No Posts",
-  //       style: TextStyle(
-  //         color: Colors.redAccent,
-  //         fontSize: 40.0,
-  //         fontFamily: 'Montserrat',
-  //         fontWeight: FontWeight.bold
-  //       ),
-  //     ),
-  //   );
   }
   else if(postOrientation == "grid"){
       

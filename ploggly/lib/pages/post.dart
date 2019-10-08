@@ -86,8 +86,8 @@ class Post extends StatefulWidget {
 }
 
 
- 
 
+final postRef = Firestore.instance.collection('posts');
    String email="",uid="",password="";
 class _PostState extends State<Post> {
   VideoPlayerController _controller;
@@ -345,8 +345,18 @@ bool isVideo = false;
       .collection('userPosts')
       .document(postId)
       .get().then((doc){
-          
-          print(isVideo);
+          if(doc.data['videoURL'] != "" && doc.data['mediaURL'] == ""){
+            setState(() {
+              isVideo = true;
+              _controller = VideoPlayerController.network(doc.data['videoURL']);
+              _initalizedVideoPlayerFuture = _controller.initialize();
+            });
+
+          }
+
+    print("videoURL "+doc.data['videoURL']);
+
+          print("Is Video : $isVideo");
         return isVideo;
         
       });
@@ -354,26 +364,46 @@ bool isVideo = false;
      
  }
   
-   
+   buildPostVideo(){
+     return GestureDetector(
+       onDoubleTap: handleLikePost,
+       child: Stack(
+         alignment: Alignment.center,
+         children: <Widget>[
+
+          Chewie(
+            controller: ChewieController(
+                videoPlayerController: _controller,
+                aspectRatio: 12/9,
+                autoPlay: false,
+                looping: true
+            ),
+          ),
+
+           showHeart ? Animator(
+             duration: Duration(milliseconds: 300),
+             tween: Tween(begin: 0.8, end:1.4),
+             curve: Curves.easeIn,
+             cycles: 0,
+             builder: (anim)=>Transform.scale(
+               scale: anim.value,
+               child: Icon(Icons.favorite,size: 150.0,color:Colors.redAccent),
+             ),
+           ) : Text(""),
+
+         ],
+       ),
+     );
+   }
 
   buildPostImage(){
-       print(_controller);
+
     return GestureDetector(
       onDoubleTap: handleLikePost,
       child: Stack(
         alignment: Alignment.center,
         children: <Widget>[
-          
-          Chewie(
-           
-                  controller: ChewieController(
-                    videoPlayerController: _controller,
-                    aspectRatio: 16/9,
-                    autoPlay: false,
-                    looping: true
-                    
-                  ) 
-                ), 
+   
           cachedNetworkImage(mediaUrl),
           
          showHeart ? Animator(
@@ -462,7 +492,7 @@ bool isVideo = false;
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         buildPostHeader(),
-        buildPostImage(),
+        isVideo ? buildPostVideo() : buildPostImage(),
         buildPostFooter()
 
       ],
@@ -470,13 +500,14 @@ bool isVideo = false;
   }
 }
 
-showComments(BuildContext context,{String postId,String ownerId,String mediaUrl}){
+showComments(BuildContext context,{String postId,String ownerId,String mediaUrl,String videoUrl}){
 
   Navigator.push(context,MaterialPageRoute(builder: (context){
     return Comments(
       postId:postId,
       postOwnerId:ownerId,
-      postMediaUrl:mediaUrl
+      postMediaUrl:mediaUrl,
+      postVideoUrl: videoUrl,
     );
   }));
 }
