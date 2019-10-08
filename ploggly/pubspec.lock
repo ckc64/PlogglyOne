@@ -56,14 +56,14 @@ packages:
       name: chewie
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.9.8"
+    version: "0.9.8+1"
   cloud_firestore:
     dependency: "direct dev"
     description:
       name: cloud_firestore
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.12.9+3"
+    version: "0.12.9+4"
   collection:
     dependency: transitive
     description:
@@ -84,7 +84,7 @@ packages:
       name: crypto
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.2"
+    version: "2.1.3"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -164,7 +164,7 @@ packages:
       name: geolocator
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.1.3"
+    version: "5.1.4+1"
   google_api_availability:
     dependency: transitive
     description:
@@ -206,7 +206,7 @@ packages:
       name: location_permissions
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.2"
+    version: "2.0.3"
   matcher:
     dependency: transitive
     description:
@@ -309,7 +309,7 @@ packages:
       name: sqflite
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.6+4"
+    version: "1.1.7"
   stack_trace:
     dependency: transitive
     description:
@@ -323,7 +323,7 @@ packages:
       name: states_rebuilder
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.5.0+1"
+    version: "1.5.1"
   stream_channel:
     dependency: transitive
     description:
@@ -365,7 +365,7 @@ packages:
       name: timeago
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.19"
+    version: "2.0.20"
   typed_data:
     dependency: transitive
     description:
@@ -402,5 +402,5 @@ packages:
     source: hosted
     version: "3.5.0"
 sdks:
-  dart: ">=2.4.0 <3.0.0"
-  flutter: ">=1.5.0 <2.0.0"
+  dart: ">=2.5.0 <3.0.0"
+  flutter: ">=1.9.1 <2.0.0"
