@@ -345,15 +345,7 @@ bool isVideo = false;
       .collection('userPosts')
       .document(postId)
       .get().then((doc){
-          if(doc.data['videoURL'] != "" ){
-              setState(() {
-                isVideo = true; 
-              });
-          }else if(doc.data['mediaURL'] != "" && doc.data['videoURL'] == ""){
-            setState(() {
-              isVideo = false; 
-            });
-          }
+          
           print(isVideo);
         return isVideo;
         
@@ -365,7 +357,7 @@ bool isVideo = false;
    
 
   buildPostImage(){
-      _controller = VideoPlayerController.network(videoUrl);
+       print(_controller);
     return GestureDetector(
       onDoubleTap: handleLikePost,
       child: Stack(
@@ -373,6 +365,7 @@ bool isVideo = false;
         children: <Widget>[
           
           Chewie(
+           
                   controller: ChewieController(
                     videoPlayerController: _controller,
                     aspectRatio: 16/9,

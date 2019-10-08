@@ -67,19 +67,21 @@ class _UploadState extends State<Upload> {
   }
 
   handleRecordVideo() async{
-    File file = await ImagePicker.pickVideo(
+     Navigator.pop(context);
+    File videoFile = await ImagePicker.pickVideo(
       source: ImageSource.camera,
     );
 
-    if(file != null){
+ 
       setState(() {
-       this.file=file; 
+       this.file=videoFile;
        isVideo = true;
-       _controller = VideoPlayerController.file(file);
+       _controller = VideoPlayerController.file(videoFile);
        _initalizedVideoPlayerFuture = _controller.initialize();
       });
-    }
-    print(isVideo);
+    
+    print("$isVideo : ${this.file}");
+    
   }
 
   selectImage(parentContext){
@@ -140,21 +142,35 @@ Container buildSplashScreen(){
     setState(() {
       isUploading = true;
     });
-    isVideo ? "" : await compressImage() ;
-    String videoUrl = await uploadVideo(file);
-    String mediaUrl = await uploadImage(file);
-    createPostInFireStore(
-      description: captionController.text,
-      location: locationController.text,
-      mediaUrl: isVideo ? "" : mediaUrl,
-      videoUrl: isVideo ? videoUrl : "",
-    );
+    isVideo ? "" : await compressImage();
+
+    if(isVideo){
+      String videoUrl = await uploadVideo(file);
+      print("video");
+        createPostInFireStore(
+        description: captionController.text,
+        location: locationController.text,
+        mediaUrl: "",
+        videoUrl: videoUrl,
+      );
+    }else{
+      print("picture");
+        String mediaUrl = await uploadImage(file);
+        createPostInFireStore(
+        description: captionController.text,
+        location: locationController.text,
+        mediaUrl: mediaUrl,
+        videoUrl: "",
+      );
+    }
+    
 
    
      locationController.clear();
      captionController.clear() ;
  
      setState(() {
+    
       file=null;
       isUploading = false;
       profileID = Uuid().v4();
@@ -216,6 +232,7 @@ Container buildSplashScreen(){
 
   }
 
+
   Future<String>uploadImage(imageFile) async{
     StorageUploadTask uploadTask = storageRef.child("post_$profileID.jpg").putFile(imageFile);
     StorageTaskSnapshot storageSnap = await uploadTask.onComplete;
@@ -226,10 +243,6 @@ Container buildSplashScreen(){
   Future<String>uploadVideo(videoFile) async{
       StorageUploadTask uploadTask = storageRef.child("video_$profileID").putFile(videoFile);
       StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
-
-      setState(() {
-       isVideo = false; 
-      });
 
       String downloadUrl = await storageTaskSnapshot.ref.getDownloadURL();
       return downloadUrl;
@@ -358,7 +371,7 @@ Container buildSplashScreen(){
      String completeAddress = '${placemark.subThoroughfare} ${placemark.thoroughfare}, ${placemark.subLocality}${placemark.locality}, ${placemark.subAdministrativeArea},${placemark.administrativeArea},${placemark.postalCode}, ${placemark.country}';
      
      print(completeAddress);
-    String formattedAddress = "${placemark.locality},${placemark.country}";
+    String formattedAddress = "${placemark.subLocality}${placemark.locality},${placemark.country}";
     locationController.text = formattedAddress;
   }
 

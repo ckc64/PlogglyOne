@@ -1,7 +1,9 @@
+import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:ploggly/pages/post.dart';
 import 'package:ploggly/pages/post_screen.dart';
 import 'package:ploggly/widgets/custom_image.dart';
+import 'package:video_player/video_player.dart';
 
 class PostTile extends StatelessWidget {
   final Post post;
@@ -16,7 +18,10 @@ class PostTile extends StatelessWidget {
   bool checkIfVideo(){
     if(post.mediaUrl == "" && post.videoUrl != "" ){
         return true;
+    }else{
+         return false;
     }
+   
   }
 
   @override
