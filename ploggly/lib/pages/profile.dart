@@ -418,7 +418,7 @@ buildProfilePost(){
     List<GridTile>gridTiles = [];
       posts.forEach((post){
             gridTiles.add(GridTile(
-              child:  PostTile(post)
+              child:  Postile(post: post,)
             ));
       });
       return GridView.count(

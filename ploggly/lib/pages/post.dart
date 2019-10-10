@@ -85,8 +85,6 @@ class Post extends StatefulWidget {
   );
 }
 
-
-
 final postRef = Firestore.instance.collection('posts');
    String email="",uid="",password="";
 class _PostState extends State<Post> {
@@ -145,7 +143,6 @@ final String postId;
   this.likeCount,
   });
 
- 
 
   buildPostHeader(){
      final userRef = Firestore.instance.collection('users');

@@ -14,6 +14,7 @@ class PostScreen extends StatelessWidget {
   final postRef = Firestore.instance.collection('posts');
   @override
   Widget build(BuildContext context) {
+    print("yow"+this.postId);
     return FutureBuilder(
       future: postRef.document(userId).collection('userPosts').document(postId).get(),
       builder: (context,snapshot){
