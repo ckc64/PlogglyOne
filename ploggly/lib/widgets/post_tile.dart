@@ -66,8 +66,8 @@ showPost(context){
             aspectRatio: 1/1,
             showControls: false,
             overlay: Padding(
-              padding: EdgeInsets.symmetric(vertical: 95.0),
-              child: Icon(Icons.play_arrow,size: 35.0,color: Colors.white,),
+              padding: EdgeInsets.all(10.0),
+              child: Center(child: Icon(Icons.play_arrow,size: 50.0,color: Colors.white,)),
             )
 
         ),
