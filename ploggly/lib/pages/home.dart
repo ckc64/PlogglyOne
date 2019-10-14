@@ -9,6 +9,7 @@ import 'package:ploggly/pages/timeline.dart';
 import 'package:ploggly/pages/upload.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:ploggly/pages/user.dart';
+import 'package:ploggly/pages/worldtimeline.dart';
 
 
 
@@ -139,6 +140,7 @@ Future<bool> _onBackPressed(){
         onWillPop: _onBackPressed,
               child: PageView(
           children: <Widget>[
+            WorldTimeline(currentUser: widget.userID,),
             Timeline(currentUser:widget.userID),
             ActivityFeed(),
             Upload(currentUser: widget.userID),
@@ -155,6 +157,7 @@ Future<bool> _onBackPressed(){
           index: pageIndex,
           height: 50.0,
           items: <Widget>[
+             Icon(Icons.language, size: 25,color: Colors.white,),
             Icon(Icons.home, size: 25,color: Colors.white,),
             Icon(Icons.notifications, size: 25,color: Colors.white),
             Icon(Icons.camera_alt, size: 25,color: Colors.white),

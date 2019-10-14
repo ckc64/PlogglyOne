@@ -31,6 +31,7 @@ class _UploadState extends State<Upload> {
   File file;
   final userRef = Firestore.instance.collection('users');
   final postRef = Firestore.instance.collection('posts');
+  final worldPostRef = Firestore.instance.collection('WorldPosts');
   bool isUploading = false;
   File _image;
   final StorageReference storageRef = FirebaseStorage.instance.ref();
@@ -74,6 +75,7 @@ class _UploadState extends State<Upload> {
 
  
       setState(() {
+      
        this.file=videoFile;
        isVideo = true;
        _controller = VideoPlayerController.file(videoFile);
@@ -147,7 +149,14 @@ Container buildSplashScreen(){
     if(isVideo){
       String videoUrl = await uploadVideo(file);
       print("video");
+
         createPostInFireStore(
+        description: captionController.text,
+        location: locationController.text,
+        mediaUrl: "",
+        videoUrl: videoUrl,
+      );
+      createWorldPostInFireStore(
         description: captionController.text,
         location: locationController.text,
         mediaUrl: "",
@@ -157,6 +166,13 @@ Container buildSplashScreen(){
       print("picture");
         String mediaUrl = await uploadImage(file);
         createPostInFireStore(
+        description: captionController.text,
+        location: locationController.text,
+        mediaUrl: mediaUrl,
+        videoUrl: "",
+      );
+
+      createWorldPostInFireStore(
         description: captionController.text,
         location: locationController.text,
         mediaUrl: mediaUrl,
@@ -178,6 +194,39 @@ Container buildSplashScreen(){
    
   }
 
+  createWorldPostInFireStore({String mediaUrl,String videoUrl,String location, String description}) {
+    final docRef = Firestore.instance
+        .collection('users')
+        .document(widget.currentUser);
+
+    docRef.get().then((doc){
+      if (doc.exists) {
+
+        try{
+
+            worldPostRef
+              .document()
+              .setData({
+            "postID":profileID,
+            "ownerID":widget.currentUser,
+            "username":doc.data["username"],
+            "mediaURL":mediaUrl,
+            "videoURL":videoUrl,
+            "description":description,
+            "location": location,
+            "timestamp":DateTime.now(),
+            "likes":{},
+
+          });
+        }catch(e){
+          print(e);
+        }
+      } else {
+        // doc.data() will be undefined in this case
+        print("No such document!");
+      }
+    });
+  }
   createPostInFireStore({String mediaUrl,String videoUrl,String location, String description}){
   
      final docRef = Firestore.instance
@@ -371,7 +420,7 @@ Container buildSplashScreen(){
      String completeAddress = '${placemark.subThoroughfare} ${placemark.thoroughfare}, ${placemark.subLocality}${placemark.locality}, ${placemark.subAdministrativeArea},${placemark.administrativeArea},${placemark.postalCode}, ${placemark.country}';
      
      print(completeAddress);
-    String formattedAddress = "${placemark.subLocality}${placemark.locality},${placemark.country}";
+    String formattedAddress = "${placemark.subThoroughfare} ${placemark.thoroughfare},${placemark.locality},${placemark.country}";
     locationController.text = formattedAddress;
   }
 
