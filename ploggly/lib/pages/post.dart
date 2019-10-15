@@ -239,6 +239,7 @@ final String postId;
             doc.reference.delete();
           }
        });
+       Navigator.pop(context);
    }
 
   handleLikePost(){
