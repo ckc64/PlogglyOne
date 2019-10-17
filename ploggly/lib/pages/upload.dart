@@ -216,6 +216,7 @@ Container buildSplashScreen(){
             "location": location,
             "timestamp":DateTime.now(),
             "likes":{},
+            "reports":{}
 
           });
         }catch(e){
@@ -251,6 +252,7 @@ Container buildSplashScreen(){
             "location": location,
             "timestamp":DateTime.now(),
             "likes":{},
+             "reports":{}
 
           });
       }catch(e){

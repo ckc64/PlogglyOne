@@ -26,6 +26,7 @@ class Post extends StatefulWidget {
   final String mediaUrl;
   final String videoUrl;
   final dynamic likes;
+  final dynamic reports;
   User currentUser;
   
 
@@ -39,7 +40,8 @@ class Post extends StatefulWidget {
   this.description,
   this.mediaUrl,
   this.likes, 
-  this.videoUrl, 
+  this.videoUrl,
+  this.reports
   });
 
   factory Post.fromDocument(DocumentSnapshot doc){
@@ -52,6 +54,7 @@ class Post extends StatefulWidget {
       mediaUrl: doc['mediaURL'],
       videoUrl: doc['videoURL'],
       likes: doc['likes'],
+      reports: doc['reports'],
     );
   }
 
@@ -61,6 +64,20 @@ class Post extends StatefulWidget {
     }
     int count = 0;
     likes.values.forEach((val){
+        if(val==true){
+          count+=1;
+        }
+    });
+
+    return count;
+  }
+
+   int getReportsCount(reports){
+    if(reports == null){
+      return 0;
+    }
+    int count = 0;
+    reports.values.forEach((val){
         if(val==true){
           count+=1;
         }
@@ -81,7 +98,9 @@ class Post extends StatefulWidget {
     mediaUrl: this.mediaUrl,
     videoUrl:this.videoUrl,
     likes: this.likes,
+    reports: this.reports,
     likeCount: getLikeCount(this.likes),
+    reportCount: getReportsCount(this.reports)
   );
 }
 
@@ -113,6 +132,8 @@ class _PostState extends State<Post> {
     // TODO: implement initState
     super.initState();
     checkIfVideo();
+   // getUserCount();
+   print(reportCount);
     _function();
   }
 
@@ -127,8 +148,11 @@ final String postId;
   final String mediaUrl;
   final String videoUrl;
   int likeCount;
+  int reportCount;
   Map likes;
+  Map reports;
   bool isLiked;
+  bool isReported;
   bool showHeart=false;
   
   _PostState({
@@ -139,11 +163,14 @@ final String postId;
   this.description,
   this.mediaUrl,
   this.likes,
+  this.reports,
   this.videoUrl,
   this.likeCount,
+  this.reportCount
   });
 
-
+  int userCount;
+  String reportText = " Report";
   buildPostHeader(){
      final userRef = Firestore.instance.collection('users');
     return FutureBuilder(
@@ -152,7 +179,7 @@ final String postId;
         if(!snapshot.hasData){
           return circularProgress();
         }
-         bool isPostOwner = loggedInUser.uid==ownerId;
+         
          return ListTile(
             leading: CircleAvatar(
               backgroundImage: CachedNetworkImageProvider(snapshot.data['profpic']),
@@ -170,21 +197,22 @@ final String postId;
               ),
             ),
             subtitle: Text(location),
-            trailing: isPostOwner ? IconButton(
+            trailing: IconButton(
               onPressed: ()=>handleDeletePost(context),
               icon: Icon(Icons.more_vert),
-            ):Text(""),
+            ),
          );
       }
     );
   }
   handleDeletePost(BuildContext parentContext){
+    bool isPostOwner = loggedInUser.uid==ownerId;
       return showDialog(
         context: parentContext,
         builder: (context){
-          return SimpleDialog(title: Text("Remove this post?"),
+          return SimpleDialog(title: Text("Remove/Report this post?"),
           children: <Widget>[
-            SimpleDialogOption(
+            isPostOwner ? SimpleDialogOption(
               onPressed: (){
                 Navigator.pop(context);
                 deletePost();
@@ -192,17 +220,39 @@ final String postId;
               child: Text("Delete",
               style:TextStyle(color: Colors.red),
               ),
-            ),
+            ) : Text(""),
+              isPostOwner ? Text("") : SimpleDialogOption(
+              onPressed: (){
+                
+                //deletePost();
+               
+                handleReportPost();
+                Navigator.pop(context);
+              },
+              child: Text(reportText),
+            )  ,
               SimpleDialogOption(
                 onPressed: ()=>Navigator.pop(context),
               child: Text("Cancel",
               ),
-            )
+            ),
+         
           ],
           );
         }
       );
   }
+ 
+
+
+   getUserCount() async{
+      QuerySnapshot snapshot = await userRef
+      .getDocuments();
+      setState(() {
+        userCount = snapshot.documents.length;
+      });
+  }
+
 
    deletePost() async{
        final postRef = Firestore.instance.collection('posts');
@@ -241,7 +291,41 @@ final String postId;
        });
        Navigator.pop(context);
    }
+  handleReportPost(){
 
+    final postRef = Firestore.instance.collection('posts');
+    bool _isReported= reports[currentUserID]==true;
+
+           if(_isReported){
+      postRef
+      .document(ownerId)
+      .collection('userPosts')
+      .document(postId)
+      .updateData({'reports.$currentUserID':false});
+     
+      setState(() {
+       reportCount -= 1;
+       isReported = false;
+       reports[currentUserID]=false;
+       reportText = "Report";
+      });
+    }else if(!_isReported){
+       postRef
+      .document(ownerId)
+      .collection('userPosts')
+      .document(postId)
+      .updateData({'reports.$currentUserID':true});
+     
+      setState(() {
+       reportCount += 1;
+       isReported = true;
+       reports[currentUserID]=true;
+      reportText = "Reported";
+      });
+    }
+      
+      
+  }
   handleLikePost(){
   
     final postRef = Firestore.instance.collection('posts');
@@ -298,6 +382,8 @@ final String postId;
     } else {
         // doc.data() will be undefined in this case
         print("remove like No such document!");
+
+
     }
         });
     
