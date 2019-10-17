@@ -133,7 +133,7 @@ class _PostState extends State<Post> {
     super.initState();
     checkIfVideo();
    // getUserCount();
-   print(reportCount);
+  
     _function();
   }
 
@@ -242,7 +242,8 @@ final String postId;
         }
       );
   }
- 
+
+
 
 
    getUserCount() async{
@@ -252,8 +253,7 @@ final String postId;
         userCount = snapshot.documents.length;
       });
   }
-
-
+ 
    deletePost() async{
        final postRef = Firestore.instance.collection('posts');
        postRef
@@ -292,7 +292,7 @@ final String postId;
        Navigator.pop(context);
    }
   handleReportPost(){
-
+     
     final postRef = Firestore.instance.collection('posts');
     bool _isReported= reports[currentUserID]==true;
 
