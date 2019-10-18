@@ -1,6 +1,6 @@
 # PlogglyOne
-If you registering  your email you need to fill up all the details to sucessfully login , if failed to fill up you will back again to first time page.
-
+If you registering  your email you need to fill up all the details to sucessfully login , if failed to fill up you will back again to first time page.<br />
+Credit for Login UI page : https://github.com/huextrat/TheGorgeousLogin <br />
 -------------------------
 Language : Dart and one page of javascript<br />
 Database : Firebase with trigger functions<br />
