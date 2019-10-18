@@ -6,6 +6,12 @@ Language : Dart and one page of javascript<br />
 Database : Firebase with trigger functions<br />
 SDK : Flutter
 <br />
+
+Sample Login <br />
+Email : juan@gmail.com<br />
+Password : 123456<br />
+
+
 Features :<br />
 Login and Register System (Facebook and Google not available for design only)<br />
 
