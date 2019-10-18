@@ -1,5 +1,5 @@
 # PlogglyOne
-If you register you need to fill up all the details to sucessfully login , if failed to fill up you will back again to first time page.
+If you registering  your email you need to fill up all the details to sucessfully login , if failed to fill up you will back again to first time page.
 
 -------------------------
 Language : Dart and one page of javascript<br />
